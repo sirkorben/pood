@@ -48,9 +48,15 @@ func fileExists(filename string) bool {
 }
 
 func fillDbWithTablesAndAdmin() {
-	var err error
-	var adminPass string = helpers.GeneratePassword("dummyPassWillBeTakenFromLocalEnvOrSomeHow")
+	// delete this part part if compiles
+	// var err error
+	// var adminPass string = helpers.GeneratePassword("dummyPassWillBeTakenFromLocalEnvOrSomeHow")
 
+	adminPass, err := helpers.GeneratePassword("dummyPassWillBeTakenFromLocalEnvOrSomeHow")
+	if err != nil {
+		// handle error
+		return
+	}
 	const CREATE string = `
 	create table users(	
 		id INTEGER not null primary key autoincrement,
@@ -75,7 +81,7 @@ func fillDbWithTablesAndAdmin() {
 	}
 
 	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password) VALUES (?,?,?,?,?)",
-		1, "Daniil", "Batjkovich", "danic@prostoSobaka", adminPass)
+		1, "Daniil", "Batjkovich", "danic@prostoSobaka.com", adminPass)
 	if err != nil {
 		// handle error
 		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)

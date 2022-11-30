@@ -32,7 +32,8 @@ func routes() *http.ServeMux {
 	sm.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 	sm.Handle("/templates/", http.StripPrefix("/templates/", http.FileServer(http.Dir("./templates/"))))
 	sm.HandleFunc("/", home)
-	sm.HandleFunc("/signUp", signUp)
-	sm.HandleFunc("/signIn", signIn)
+	sm.HandleFunc("/signup", signUp)
+	sm.HandleFunc("/signin", signIn)
+	sm.HandleFunc("/search", search)
 	return sm
 }

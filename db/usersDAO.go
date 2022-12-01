@@ -79,3 +79,17 @@ func activated(id int) (int, error) {
 	}
 	return activated, nil
 }
+
+func GetFirstNameById(id int) (*models.User, error) {
+	row := DB.QueryRow("select id, firstname from users where id = ?", id)
+	u := &models.User{}
+	err := row.Scan(&u.Id, &u.FirstName)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+	return u, nil
+}

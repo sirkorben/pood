@@ -21,4 +21,11 @@ type User struct {
 	HashedPassword []byte `json:"-"`
 	// IsAdmin        int    `json:"is_admin,omitempty"`
 	// Activated      int    `json:"activated,omitempty"`
+
+	// date of creation do we need ?
+}
+
+type Session struct {
+	Id   string
+	User *User
 }

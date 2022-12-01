@@ -7,6 +7,8 @@ import (
 	"pood/db"
 	"pood/helpers"
 	"pood/models"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 func enableCors(w *http.ResponseWriter) {
@@ -82,19 +84,13 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
-		// var credential string
-		// if u.Email == "" {
-		// 	credential = u.Username
-		// } else {
-		// 	credential = u.Email
-		// }
+
 		credential := u.Email
 		id, err := db.Authenticate(credential, u.Password)
 		if err != nil {
 			if errors.Is(err, models.ErrInvalidCredentials) {
 				helpers.ErrorResponse(w, helpers.CredentialsDontMatchErrorMsg, http.StatusBadRequest)
-			}
-			if errors.Is(err, models.ErrUserNotActivated) {
+			} else if errors.Is(err, models.ErrUserNotActivated) {
 				helpers.ErrorResponse(w, helpers.UserNotActivatedErrorMsg, http.StatusUnauthorized)
 			} else {
 				log.Println("db.Authenticate(credential, u.Password)", err)
@@ -102,31 +98,64 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
-		log.Printf("User with [Id - %v] joined the Pood", id)
 
-		// 	err = sqlite.InsertSession(c.Value, id)
-		// 	if err != nil {
-		// 		log.Println(err.Error())
-		// 		errorResponse(w, internalErrorMsg, http.StatusInternalServerError)
-		// 		return
-		// 	}
-		// }
-		// sID := uuid.NewV4()
-		// c := &http.Cookie{
-		// 	Name:   "session",
-		// 	Value:  sID.String(),
-		// 	MaxAge: 60 * 60 * 24,
-		// }
-		// http.SetCookie(w, c)
-		// err = sqlite.InsertSession(c.Value, id)
-		// if err != nil {
-		// 	log.Println(err.Error())
-		// 	errorResponse(w, internalErrorMsg, http.StatusInternalServerError)
-		// 	return
-		// }
+		sID := uuid.NewV4()
+		c := &http.Cookie{
+			Name:   "session",
+			Value:  sID.String(),
+			MaxAge: 60 * 60 * 24,
+		}
+		http.SetCookie(w, c)
+		err = db.InsertSession(c.Value, id)
+		if err != nil {
+			log.Println(err.Error())
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+
+		log.Printf("User with [Id - %v] joined the Pood", id)
 	}
 }
 
+func signOut(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	s, err := db.CheckSession(r)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+	err = db.DeleteSession(s.Id)
+	if err != nil {
+		log.Println(err.Error())
+		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:   "session",
+		Value:  "",
+		MaxAge: -1,
+	})
+}
+
 func search(w http.ResponseWriter, r *http.Request) {
+
+	user := &models.User{
+		Id: -1,
+	}
+	s, err := db.CheckSession(r)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	} else {
+		user = s.User
+	}
+	//need to be sure that activated user owning this session
+	log.Printf("User with [Id - %v] accessed to /search", user.Id)
 
 }

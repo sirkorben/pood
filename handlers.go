@@ -77,7 +77,7 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 			if errors.As(err, &errMsg) {
 				helpers.ErrorResponse(w, *errMsg, http.StatusBadRequest)
 			} else {
-				log.Println(err.Error())
+				log.Println("helpers.DecodeJSONBody(w, r, &u)", err)
 				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			}
 			return
@@ -93,14 +93,24 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if errors.Is(err, models.ErrInvalidCredentials) {
 				helpers.ErrorResponse(w, helpers.CredentialsDontMatchErrorMsg, http.StatusBadRequest)
+			}
+			if errors.Is(err, models.ErrUserNotActivated) {
+				helpers.ErrorResponse(w, helpers.UserNotActivatedErrorMsg, http.StatusUnauthorized)
 			} else {
-				log.Println(err.Error())
+				log.Println("db.Authenticate(credential, u.Password)", err)
 				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			}
 			return
 		}
 		log.Printf("User with [Id - %v] joined the Pood", id)
 
+		// 	err = sqlite.InsertSession(c.Value, id)
+		// 	if err != nil {
+		// 		log.Println(err.Error())
+		// 		errorResponse(w, internalErrorMsg, http.StatusInternalServerError)
+		// 		return
+		// 	}
+		// }
 		// sID := uuid.NewV4()
 		// c := &http.Cookie{
 		// 	Name:   "session",

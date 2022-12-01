@@ -54,5 +54,28 @@ func Authenticate(credName, password string) (int, error) {
 			return 0, err
 		}
 	}
+
+	activated, err := activated(id)
+	if err != nil {
+		return 0, err
+	}
+	if activated != 1 {
+		//return error that user is not activated   401
+		return 0, models.ErrUserNotActivated
+	}
 	return id, nil
+}
+
+func activated(id int) (int, error) {
+	var activated int
+	row := DB.QueryRow("select activated from users where id = ?", id)
+	err := row.Scan(&activated)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 500, models.ErrNoRecord
+		} else {
+			return 500, err
+		}
+	}
+	return activated, nil
 }

@@ -85,6 +85,10 @@ var CredentialsDontMatchErrorMsg = ErrorMsg{
 	ErrorDescription: "Email and password don't match",
 	ErrorType:        "CREDENTIALS_DONT_MATCH",
 }
+var UserNotActivatedErrorMsg = ErrorMsg{
+	ErrorDescription: "User is not activated by admin",
+	ErrorType:        "NOT_ACTIVATED",
+}
 
 // decoder errors
 var ContentTypeNotAppJsonErrorMsg = ErrorMsg{

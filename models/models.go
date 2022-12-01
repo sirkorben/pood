@@ -9,6 +9,7 @@ var (
 	ErrDuplicateEmail     = errors.New("models: duplicate email")
 	ErrDuplicateUsername  = errors.New("models: duplicate username")
 	ErrTooManySpaces      = errors.New("inupt data: too many spaces in field")
+	ErrUserNotActivated   = errors.New("models: user is not activated")
 )
 
 type User struct {

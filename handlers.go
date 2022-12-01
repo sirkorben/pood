@@ -13,7 +13,7 @@ import (
 
 
 func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "http://127.0.0.1:3000") // changed for my live server addr
+	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // changed for my live server addr
 	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
 	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Authorization, Accept")

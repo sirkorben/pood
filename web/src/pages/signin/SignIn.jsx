@@ -9,8 +9,8 @@ const SignInPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    try {
-      axios.post(
+    const res = axios
+      .post(
         "http://localhost/8080/signin",
         JSON.stringify({
           email,
@@ -21,9 +21,10 @@ const SignInPage = () => {
           withCredentials: true,
         }
       )
-    } catch (error) {
-      console.log(error)
-    }
+      .catch((error) => {
+        console.log(error)
+      })
+    console.log(res)
   }
 
   return (

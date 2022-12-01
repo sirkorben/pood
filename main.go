@@ -34,6 +34,7 @@ func routes() *http.ServeMux {
 	sm.HandleFunc("/", home)
 	sm.HandleFunc("/signup", signUp)
 	sm.HandleFunc("/signin", signIn)
+	sm.HandleFunc("/signout", signOut)
 	sm.HandleFunc("/search", search)
 	return sm
 }

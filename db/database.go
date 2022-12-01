@@ -48,9 +48,6 @@ func fileExists(filename string) bool {
 }
 
 func fillDbWithTablesAndAdmin() {
-	// delete this part part if compiles
-	// var err error
-	// var adminPass string = helpers.GeneratePassword("dummyPassWillBeTakenFromLocalEnvOrSomeHow")
 
 	adminPass, err := helpers.GeneratePassword("dummyPassWillBeTakenFromLocalEnvOrSomeHow")
 	if err != nil {

@@ -17,9 +17,10 @@ func (mr *ErrorMsg) Error() string {
 func DecodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 	headerContentTtype := r.Header.Get("Content-Type")
 	if headerContentTtype != "application/json" {
-		errDescription := "Content Type is not application/json"
-		errType := "WRONG_CONTENCT_TYPE"
-		return &ErrorMsg{ErrorDescription: errDescription, ErrorType: errType}
+		// errDescription := "Content Type is not application/json"
+		// errType := "WRONG_CONTENCT_TYPE"
+		// return &ErrorMsg{ErrorDescription: errDescription, ErrorType: errType}
+		return &ContentTypeNotAppJsonErrorMsg
 	}
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
@@ -31,9 +32,10 @@ func DecodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 		switch {
 
 		case errors.Is(err, io.EOF):
-			errDescription := "Request body must not be empty."
-			errType := "REQUEST_BODY_EMPTY"
-			return &ErrorMsg{ErrorDescription: errDescription, ErrorType: errType}
+			// errDescription := "Request body must not be empty."
+			// errType := "REQUEST_BODY_EMPTY"
+			// return &ErrorMsg{ErrorDescription: errDescription, ErrorType: errType}
+			return &RequestBodyIsEmptyErrorMsg
 
 		case errors.As(err, &unmarshalTypeError):
 			errDescription := fmt.Sprintf("Request body contains an invalid value for the %q field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset)

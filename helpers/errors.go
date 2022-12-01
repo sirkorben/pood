@@ -11,6 +11,7 @@ type ErrorMsg struct {
 	ErrorType        string `json:"error_type"`
 }
 
+// server side errors
 var InternalErrorMsg = ErrorMsg{
 	ErrorDescription: "Internal server error",
 	ErrorType:        "INTERNAL_SERVER_ERROR",
@@ -36,15 +37,50 @@ var NoRecordsErrorMsg = ErrorMsg{
 	ErrorType:        "EMPTY_FIELD",
 }
 
-var error_responses_map = map[int]ErrorMsg{
-	400: NotFoundErrorMsg,
-	404: BadRequestErrorMsg,
-	500: InternalErrorMsg,
+// client signup validation errors
+var FirstNameMissingErrorMsg = ErrorMsg{
+	ErrorDescription: "Firstname is missing",
+	ErrorType:        "FIRSTNAME_FIELD_EMPTY",
+}
+var LastNameMissingErrorMsg = ErrorMsg{
+	ErrorDescription: "Lastname is missing",
+	ErrorType:        "LASTNAME_FIELD_EMPTY",
+}
+var EmailMissingErrorMsg = ErrorMsg{
+	ErrorDescription: "Email is missing",
+	ErrorType:        "EMAIL_FIELD_EMPTY",
+}
+var PasswordMissingErrorMsg = ErrorMsg{
+	ErrorDescription: "Password is missing",
+	ErrorType:        "PASSWORD_FIELD_EMPTY",
+}
+var PasswordTooShortErrorMsg = ErrorMsg{
+	ErrorDescription: "Password is too short - 6 chars min",
+	ErrorType:        "PASSWORD_TOO_SHORT",
+}
+var EmailIsNotValidErrorMsg = ErrorMsg{
+	ErrorDescription: "Email is not valid",
+	ErrorType:        "EMAIL_INVALID",
+}
+var EmailAlreadyTakenErrorMsg = ErrorMsg{
+	ErrorDescription: "Email already taken",
+	ErrorType:        "EMAIL_ALREADY_TAKEN",
 }
 
-func ErrorResponse(w http.ResponseWriter, httpStatusCode int) {
+// decoder errors
+var ContentTypeNotAppJsonErrorMsg = ErrorMsg{
+	ErrorDescription: "Content Type is not application/json",
+	ErrorType:        "WRONG_CONTENCT_TYPE",
+}
+
+var RequestBodyIsEmptyErrorMsg = ErrorMsg{
+	ErrorDescription: "Request body must not be empty.",
+	ErrorType:        "REQUEST_BODY_EMPTY",
+}
+
+func ErrorResponse(w http.ResponseWriter, errorMsg ErrorMsg, httpStatusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(httpStatusCode)
-	jsonResp, _ := json.Marshal(error_responses_map[httpStatusCode])
+	jsonResp, _ := json.Marshal(errorMsg)
 	w.Write(jsonResp)
 }

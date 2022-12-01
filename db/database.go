@@ -63,25 +63,26 @@ func fillDbWithTablesAndAdmin() {
 		firstname TEXT not null,
 		lastname TEXT not null,
 		email TEXT not null unique, 
-		password BLOB not null);
+		password BLOB not null,
+		is_admin INTEGER not null,
+		activated INTEGER not null);
 
 	create table sessions(
 		id TEXT not null primary key, 
 		user_id INTEGER not null unique, 
 		created_date INTEGER not null);
-
 	`
 
 	_, err = DB.Exec(CREATE)
 	if err != nil {
 		// handle error
 		// error comes here while starting application with created database is in root
-		log.Println("error in _, err = DB.Exec(CREATE)")
+		log.Println("error in _, err = DB.Exec(CREATE)", err)
 		return
 	}
 
-	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password) VALUES (?,?,?,?,?)",
-		1, "Daniil", "Batjkovich", "danic@prostoSobaka.com", adminPass)
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated) VALUES (?,?,?,?,?,?,?)",
+		1, "Daniil", "Batjkovich", "danic@prostoSobaka.com", adminPass, 1, 1)
 	if err != nil {
 		// handle error
 		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)

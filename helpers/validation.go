@@ -1,4 +1,3 @@
-//TODO: Handle errors !!!!!!!!!!!!S
 package helpers
 
 import (

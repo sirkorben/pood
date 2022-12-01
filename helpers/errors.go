@@ -1,4 +1,3 @@
-//TODO: needs proper ERROR HANDLING how to described client or server errors
 package helpers
 
 import (
@@ -6,13 +5,27 @@ import (
 	"net/http"
 )
 
+// big error handling done here
+// https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
+
 type ErrorMsg struct {
 	ErrorDescription string `json:"error_description"`
 	ErrorType        string `json:"error_type"`
 }
 
+func (mr *ErrorMsg) Error() string {
+	return mr.ErrorDescription
+}
+
+func ErrorResponse(w http.ResponseWriter, errorMsg ErrorMsg, httpStatusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(httpStatusCode)
+	jsonResp, _ := json.Marshal(errorMsg)
+	w.Write(jsonResp)
+}
+
 // server side errors
-var InternalErrorMsg = ErrorMsg{
+var InternalServerErrorMsg = ErrorMsg{
 	ErrorDescription: "Internal server error",
 	ErrorType:        "INTERNAL_SERVER_ERROR",
 }
@@ -67,6 +80,12 @@ var EmailAlreadyTakenErrorMsg = ErrorMsg{
 	ErrorType:        "EMAIL_ALREADY_TAKEN",
 }
 
+// client signin validation errors
+var CredentialsDontMatchErrorMsg = ErrorMsg{
+	ErrorDescription: "Email and password don't match",
+	ErrorType:        "CREDENTIALS_DONT_MATCH",
+}
+
 // decoder errors
 var ContentTypeNotAppJsonErrorMsg = ErrorMsg{
 	ErrorDescription: "Content Type is not application/json",
@@ -76,11 +95,4 @@ var ContentTypeNotAppJsonErrorMsg = ErrorMsg{
 var RequestBodyIsEmptyErrorMsg = ErrorMsg{
 	ErrorDescription: "Request body must not be empty.",
 	ErrorType:        "REQUEST_BODY_EMPTY",
-}
-
-func ErrorResponse(w http.ResponseWriter, errorMsg ErrorMsg, httpStatusCode int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(httpStatusCode)
-	jsonResp, _ := json.Marshal(errorMsg)
-	w.Write(jsonResp)
 }

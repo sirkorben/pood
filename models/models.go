@@ -18,4 +18,6 @@ type User struct {
 	Email          string `json:"email,omitempty"`
 	Password       string `json:"password,omitempty"`
 	HashedPassword []byte `json:"-"`
+	// IsAdmin        int    `json:"is_admin,omitempty"`
+	// Activated      int    `json:"activated,omitempty"`
 }

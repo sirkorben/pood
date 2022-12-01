@@ -1,4 +1,3 @@
-//TODO: Handle Errors !!!!!!!!!!!!!!!!
 package helpers
 
 import (
@@ -10,31 +9,18 @@ import (
 	"strings"
 )
 
-func (mr *ErrorMsg) Error() string {
-	return mr.ErrorDescription
-}
-
 func DecodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 	headerContentTtype := r.Header.Get("Content-Type")
 	if headerContentTtype != "application/json" {
-		// errDescription := "Content Type is not application/json"
-		// errType := "WRONG_CONTENCT_TYPE"
-		// return &ErrorMsg{ErrorDescription: errDescription, ErrorType: errType}
 		return &ContentTypeNotAppJsonErrorMsg
 	}
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
 	err := dec.Decode(&dst)
 	if err != nil {
-		// big error handling done here
-		// https://www.alexedwards.net/blog/how-to-properly-parse-a-json-request-body
 		var unmarshalTypeError *json.UnmarshalTypeError
 		switch {
-
 		case errors.Is(err, io.EOF):
-			// errDescription := "Request body must not be empty."
-			// errType := "REQUEST_BODY_EMPTY"
-			// return &ErrorMsg{ErrorDescription: errDescription, ErrorType: errType}
 			return &RequestBodyIsEmptyErrorMsg
 
 		case errors.As(err, &unmarshalTypeError):
@@ -51,7 +37,6 @@ func DecodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 		default:
 			return err
 		}
-
 	}
 	return nil
 }

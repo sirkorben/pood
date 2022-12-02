@@ -100,3 +100,9 @@ var RequestBodyIsEmptyErrorMsg = ErrorMsg{
 	ErrorDescription: "Request body must not be empty.",
 	ErrorType:        "REQUEST_BODY_EMPTY",
 }
+
+// api calling errors
+var RequestToApiFailedErrorMsg = ErrorMsg{
+	ErrorDescription: "Could not set up a connection with Price Source",
+	ErrorType:        "BAD_CONNECTION",
+}

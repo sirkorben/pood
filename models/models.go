@@ -29,3 +29,24 @@ type Session struct {
 	Id   string
 	User *User
 }
+
+// third party API response struct
+type ApiResponse struct {
+	Prices []*OnePrice
+}
+type OnePrice struct {
+	Price            float64 `json:"price,omitempty"`
+	Article          string  `json:"article,omitempty"`
+	Supplier         string  `json:"supplier,omitempty"`
+	SupplierPriceNum float64 `json:"supplier_price_num,omitempty"`
+	Brand            string  `json:"brand,omitempty"`
+	Currency         string  `json:"currency,omitempty"`
+	CurrencyRate     string  `json:"currency_rate,omitempty"`
+	Delivery         string  `json:"delivery,omitempty"`
+	Weight           float64 `json:"weight,omitempty"`
+	Name             string  `json:"name,omitempty"`
+}
+
+func ChangePrice(op *OnePrice, percent float64) {
+	op.Price *= percent
+}

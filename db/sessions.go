@@ -12,12 +12,10 @@ func InsertSession(token string, userId int) error {
 	if err != nil {
 		return err
 	}
-
 	_, err = DB.Exec("insert into sessions (id, user_id, created_date) values (?,?, strftime('%s','now'))", token, userId)
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -36,16 +34,16 @@ func CheckSession(r *http.Request) (*models.Session, error) {
 	if err != nil {
 		return nil, err
 	}
+	// Why I need this FirstName ??
 	session.User, err = GetFirstNameById(session.User.Id)
 	if err != nil {
 		return nil, err
 	}
-	t := time.Unix(int64(createDate), 0) // time.Time
-
 	if session.Id == "" {
 		return nil, errors.New("token invalid or expired")
 	}
 
+	t := time.Unix(int64(createDate), 0) // time.Time
 	if t.AddDate(0, 0, 1).Before(time.Now()) {
 		err := DeleteSession(session.Id)
 		if err != nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"net/http"
@@ -19,7 +20,6 @@ func enableCors(w *http.ResponseWriter) {
 }
 
 func home(w http.ResponseWriter, r *http.Request) {
-	// will be used to serve opportunity to signin or signup
 	enableCors(&w)
 	if r.URL.Path != "/" {
 		helpers.ErrorResponse(w, helpers.NotFoundErrorMsg, http.StatusNotFound)
@@ -30,7 +30,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// after signup should be message that web site will be available after Admin verify user
 func signUp(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == http.MethodOptions {
@@ -143,7 +142,10 @@ func signOut(w http.ResponseWriter, r *http.Request) {
 }
 
 func search(w http.ResponseWriter, r *http.Request) {
-
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
 	user := &models.User{
 		Id: -1,
 	}
@@ -154,8 +156,34 @@ func search(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		user = s.User
+		log.Println(user)
+		log.Printf("User with [Id - %v] accessed to GET /search", user.Id)
+
 	}
-	//need to be sure that activated user owning this session
-	log.Printf("User with [Id - %v] accessed to /search", user.Id)
+
+	if r.Method == http.MethodPost {
+		// TODO: provide CallFor Prices with article given by client POST /search
+		article := "4M2820160" // delete it
+		// increse the price by 40% - it will be choosen different discount taken from User info set by admin
+		discount := 1.4
+		var prices models.ApiResponse
+		err := helpers.CallForPrices(article, &prices)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		for _, obj := range prices.Prices {
+			models.ChangePrice(obj, discount)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		jsonResp, err := json.Marshal(prices)
+		if err != nil {
+			log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+		w.Write(jsonResp)
+	}
 
 }

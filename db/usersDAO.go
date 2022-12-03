@@ -18,7 +18,7 @@ func InsertUser(user models.User) error {
 		return err
 	}
 
-	row := DB.QueryRow("select id from users where email = ?", email)
+	row := DB.QueryRow("SELECT id FROM users WHERE email = ?", email)
 	err = row.Scan()
 	if !errors.Is(err, sql.ErrNoRows) {
 		return models.ErrDuplicateEmail
@@ -36,7 +36,7 @@ func InsertUser(user models.User) error {
 func Authenticate(credName, password string) (int, error) {
 	var id int
 	var hashedPassword []byte
-	row := DB.QueryRow("select id, password from users where email = ?", credName)
+	row := DB.QueryRow("SELECT id, password FROM users WHERE email = ?", credName)
 	err := row.Scan(&id, &hashedPassword)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -68,7 +68,7 @@ func Authenticate(credName, password string) (int, error) {
 
 func activated(id int) (int, error) {
 	var activated int
-	row := DB.QueryRow("select activated from users where id = ?", id)
+	row := DB.QueryRow("SELECT activated FROM users WHERE id = ?", id)
 	err := row.Scan(&activated)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -81,7 +81,7 @@ func activated(id int) (int, error) {
 }
 
 func GetFirstNameById(id int) (*models.User, error) {
-	row := DB.QueryRow("select id, firstname from users where id = ?", id)
+	row := DB.QueryRow("SELECT id, firstname FROM users WHERE id = ?", id)
 	u := &models.User{}
 	err := row.Scan(&u.Id, &u.FirstName)
 	if err != nil {
@@ -92,4 +92,37 @@ func GetFirstNameById(id int) (*models.User, error) {
 		}
 	}
 	return u, nil
+}
+
+func GetNonActivatedUsers() ([]*models.User, error) {
+	var users []*models.User
+
+	rows, err := DB.Query("SELECT id, firstname, lastname, email, date_created FROM users WHERE activated = 0 ORDER BY date_created DESC")
+	if err != nil {
+		//handle error
+		log.Println("1", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		user := &models.User{}
+		err = rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated)
+		if err != nil {
+			//handle error
+			log.Println("2", err)
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+	if err != nil {
+		//handle error
+		log.Println("3", err)
+		return nil, err
+	}
+	for _, usr := range users {
+		log.Println(usr)
+	}
+	return users, nil
 }

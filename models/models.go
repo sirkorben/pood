@@ -10,6 +10,7 @@ var (
 	ErrDuplicateUsername  = errors.New("models: duplicate username")
 	ErrTooManySpaces      = errors.New("inupt data: too many spaces in field")
 	ErrUserNotActivated   = errors.New("models: user is not activated")
+	ErrUnauthorized       = errors.New("models: user has no rights to enter this page")
 )
 
 type User struct {
@@ -19,6 +20,7 @@ type User struct {
 	Email          string `json:"email,omitempty"`
 	Password       string `json:"password,omitempty"`
 	HashedPassword []byte `json:"-"`
+	DateCreated    int    `json:"date_created,omitempty"`
 	// IsAdmin        int    `json:"is_admin,omitempty"`
 	// Activated      int    `json:"activated,omitempty"`
 

@@ -1,13 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"pood/db"
 	"pood/helpers"
 	"pood/models"
+	"strings"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -156,34 +157,85 @@ func search(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		user = s.User
-		log.Println(user)
-		log.Printf("User with [Id - %v] accessed to GET /search", user.Id)
-
+		log.Println(fmt.Sprintf("User with [Id - %v] accessed to GET /search", s.User.Id), user.FirstName)
 	}
 
-	if r.Method == http.MethodPost {
-		// TODO: provide CallFor Prices with article given by client POST /search
-		article := "4M2820160" // delete it
-		// increse the price by 40% - it will be choosen different discount taken from User info set by admin
-		discount := 1.4
-		var prices models.ApiResponse
-		err := helpers.CallForPrices(article, &prices)
-		if err != nil {
+	// No need to call API everytime
+
+	// if r.Method == http.MethodPost {
+	// 	// TODO: provide CallForPrices with article given by client POST /search
+	// 	article := "045121011hx" // delete it
+	// 	// increse the price by 40% - it will be choosen different discount taken from User info set by admin
+	// 	discount := 1.4
+	// 	var prices models.ApiResponse
+	// 	err := helpers.CallForPrices(article, &prices)
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 		return
+	// 	}
+
+	// 	for _, obj := range prices.Prices {
+	// 		models.ChangePrice(obj, discount)
+	// 	}
+	// 	w.Header().Set("Content-Type", "application/json")
+	// 	jsonResp, err := json.Marshal(prices)
+	// 	if err != nil {
+	// 		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+	// 		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+	// 		return
+	// 	}
+	// 	w.Write(jsonResp)
+	// }
+
+}
+
+// admin logic
+func adminHandler(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+	_, err := db.CheckAdminSession(r)
+	if err != nil {
+		if errors.Is(err, models.ErrUnauthorized) {
+			helpers.ErrorResponse(w, helpers.StatusForbiddenErrorMsg, http.StatusForbidden)
+		} else if errors.Is(err, models.ErrNoRecord) {
+			helpers.ErrorResponse(w, helpers.BadRequestErrorMsg, http.StatusBadRequest)
+		} else {
 			log.Println(err)
-			return
+			helpers.ErrorResponse(w, helpers.UserNotActivatedErrorMsg, http.StatusUnauthorized)
 		}
-
-		for _, obj := range prices.Prices {
-			models.ChangePrice(obj, discount)
-		}
-		w.Header().Set("Content-Type", "application/json")
-		jsonResp, err := json.Marshal(prices)
-		if err != nil {
-			log.Fatalf("Error happened in JSON marshal. Err: %s", err)
-			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
-			return
-		}
-		w.Write(jsonResp)
+		return
+	} else {
+		log.Println("Admin - entered GET /admin")
 	}
+	url := strings.Split(strings.Trim(r.URL.Path, "/"), "/") // 	/admin/approve/ -> [admin, approve]
+	if len(url) == 2 && url[1] == "approve" {
+		if r.Method == http.MethodGet {
+			log.Println("Admin - listing non activated users on GET", r.URL.Path)
+			nonActivatedUsers()
+		}
+		if r.Method == http.MethodPatch {
+			log.Println("Admin - activating users on POST", r.URL.Path)
+			adminActivateUser()
+		}
+	}
+	if len(url) == 2 && url[1] == "orders" { //		/admin/orders/ -> [admin, orders]
+		log.Println("Admin - listing orders", r.URL.Path)
 
+	}
+}
+
+func nonActivatedUsers() ([]*models.User, error) {
+	nonactivatedUsers, err := db.GetNonActivatedUsers()
+	if err != nil {
+		// handle error
+		// handle situation of NoRows
+		return nil, err
+	}
+	return nonactivatedUsers, err
+}
+
+func adminActivateUser() {
+	log.Println("assume we have seen unactivated user, and sending request to update status of chosen user")
 }

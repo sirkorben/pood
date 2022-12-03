@@ -106,3 +106,9 @@ var RequestToApiFailedErrorMsg = ErrorMsg{
 	ErrorDescription: "Could not set up a connection with Price Source",
 	ErrorType:        "BAD_CONNECTION",
 }
+
+//admin endpoint
+var StatusForbiddenErrorMsg = ErrorMsg{
+	ErrorDescription: "Forbiden to enter",
+	ErrorType:        "FORBIDDEN",
+}

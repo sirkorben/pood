@@ -31,12 +31,13 @@ func CallForPrices(article string, dst interface{}) error {
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		//handle err
-		log.Println(err)
+		log.Println("READING BODY BYTES ERR", err)
 		return err
 	}
 
 	json.Unmarshal(bodyBytes, &dst)
 	if err != nil {
+		//handle err
 		log.Println("REQUEST BODY UNMARSHALLING err ", err)
 		return err
 	}

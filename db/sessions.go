@@ -23,13 +23,14 @@ func InsertSession(token string, userId int) error {
 func CheckSession(r *http.Request) (*models.Session, error) {
 	token, err := r.Cookie("session")
 	if err != nil {
+		// response with 401 ? unauthorized???
 		// Cookie returns the named cookie provided in the request or ErrNoCookie if not found.
 		return nil, err
 	}
 	session := &models.Session{}
-	row := DB.QueryRow("select id, user_id, created_date from sessions where id = ?", token.Value)
 	session.User = &models.User{}
 	var createDate int64 // unix time stamp
+	row := DB.QueryRow("select id, user_id, created_date from sessions where id = ?", token.Value)
 	err = row.Scan(&session.Id, &session.User.Id, &createDate)
 	if err != nil {
 		return nil, err
@@ -53,6 +54,36 @@ func CheckSession(r *http.Request) (*models.Session, error) {
 	}
 
 	return session, nil
+}
+
+func CheckAdminSession(r *http.Request) (*models.Session, error) {
+	token, err := r.Cookie("session")
+	if err != nil {
+		return nil, models.ErrNoRecord
+	}
+	session := &models.Session{}
+	session.User = &models.User{}
+	var createdDate int64
+	row := DB.QueryRow("SELECT id, user_id, created_date FROM sessions WHERE id = ?", token.Value)
+	err = row.Scan(&session.Id, &session.User.Id, &createdDate)
+	if err != nil {
+		return nil, models.ErrNoRecord
+	}
+
+	//check if session belongs to the Admin
+	if session.User.Id != 1 {
+		return nil, models.ErrUnauthorized
+	}
+	t := time.Unix(int64(createdDate), 0) // time.Time
+	if t.AddDate(0, 0, 1).Before(time.Now()) {
+		err := DeleteSession(session.Id)
+		if err != nil {
+			return nil, err
+		}
+		return nil, errors.New("token invalid or expired")
+	}
+	return session, nil
+
 }
 
 func DeleteSession(token string) error {

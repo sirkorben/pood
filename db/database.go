@@ -62,7 +62,8 @@ func fillDbWithTablesAndAdmin() {
 		email TEXT not null unique, 
 		password BLOB not null,
 		is_admin INTEGER not null,
-		activated INTEGER not null);
+		activated INTEGER not null,
+		date_created INTEGER not null);
 
 	create table sessions(
 		id TEXT not null primary key, 
@@ -78,8 +79,31 @@ func fillDbWithTablesAndAdmin() {
 		return
 	}
 
-	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated) VALUES (?,?,?,?,?,?,?)",
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
 		1, "Daniil", "Batjkovich", "danic@prostoSobaka.com", adminPass, 1, 1)
+	if err != nil {
+		// handle error
+		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
+		return
+	}
+
+	// delete two users below
+	// delete passwords
+	oneTwoThree, err := helpers.GeneratePassword("123456")
+	if err != nil {
+		// handle error
+		return
+	}
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
+		2, "User", "Activated", "alfa@bravo.com", oneTwoThree, 0, 1)
+	if err != nil {
+		// handle error
+		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
+		return
+	}
+
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
+		3, "Artem", "Bulavin", "bula@bravo.com", oneTwoThree, 0, 0)
 	if err != nil {
 		// handle error
 		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)

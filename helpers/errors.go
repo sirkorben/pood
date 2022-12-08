@@ -16,6 +16,10 @@ type ErrorMsg struct {
 	ErrorType        string `json:"error_type"`
 }
 
+type InfoMsg struct {
+	Info string `json:"info"`
+}
+
 func (mr *ErrorMsg) Error() string {
 	return mr.ErrorDescription
 }
@@ -47,6 +51,13 @@ func ErrorResponse(w http.ResponseWriter, errorMsg ErrorMsg, httpStatusCode int)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(httpStatusCode)
 	jsonResp, _ := json.Marshal(errorMsg)
+	w.Write(jsonResp)
+}
+
+func InfoResponse(w http.ResponseWriter, infoMsg InfoMsg, httpStatusCode int) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(httpStatusCode)
+	jsonResp, _ := json.Marshal(infoMsg)
 	w.Write(jsonResp)
 }
 
@@ -142,4 +153,14 @@ var RequestToApiFailedErrorMsg = ErrorMsg{
 var StatusForbiddenErrorMsg = ErrorMsg{
 	ErrorDescription: "Forbiden to enter",
 	ErrorType:        "FORBIDDEN",
+}
+
+// cart responses
+var EmptyCartErrorMsg = ErrorMsg{
+	ErrorDescription: "You should add products to confirm cart",
+	ErrorType:        "EMPTY_CART_CONFIRMATION_ERROR",
+}
+
+var OrderConfirmedInfoMsg = InfoMsg{
+	Info: "Order confirmed and will be sent to email",
 }

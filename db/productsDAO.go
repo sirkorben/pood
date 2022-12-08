@@ -7,7 +7,6 @@ import (
 )
 
 func AddProductToShoppingCart(userId int, product models.Product) error {
-
 	orderId, err := GetNonConfirmedOrderId(userId)
 	if err != nil {
 		return err
@@ -23,20 +22,11 @@ func AddProductToShoppingCart(userId int, product models.Product) error {
 	return nil
 }
 
-func GetOrderedProductsByConfirmedOrderId(orderId string) []models.Product {
-
-	return nil
-}
-
 func GetProductsUnderNonConfirmedOrderId(userId int) ([]*models.Product, error) {
 	orderId, err := GetNonConfirmedOrderId(userId)
 	if err != nil {
-		// handle error
-		// return smth?
-		fmt.Println("2\t", err)
 		return nil, err
 	}
-
 	rows, err := DB.Query("SELECT * FROM products_ordered WHERE order_id = ? ORDER BY product_quantity_price DESC", orderId)
 	if err != nil {
 		fmt.Println("3\t", err)
@@ -60,4 +50,9 @@ func GetProductsUnderNonConfirmedOrderId(userId int) ([]*models.Product, error) 
 		return nil, err
 	}
 	return products, nil
+}
+
+func GetOrderedProductsByConfirmedOrderId(orderId string) []models.Product {
+
+	return nil
 }

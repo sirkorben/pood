@@ -3,7 +3,9 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
+	"pood/models"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -25,12 +27,10 @@ func GetNonConfirmedOrderId(userId int) (string, error) {
 	err := row.Scan(&orderId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			log.Println("1", err)
-			// handle error
-			// should not happen ???
+			log.Println("GetNonConfirmedOrderId err 1 ->", err)
 			return "", err
 		} else {
-			log.Println("2", err)
+			log.Println("GetNonConfirmedOrderId err 2 ->", err)
 			return "", err
 		}
 	}
@@ -93,7 +93,53 @@ func GetConfirmedOrderIdsForAdmin() ([]string, error) {
 	return orderIds, nil
 }
 
-func ConfirmOrderId(userId int) error {
+func ConfirmOrder(userId int) error {
+	orderId, err := GetNonConfirmedOrderId(userId)
+	if err != nil {
+		// handle err
+		log.Println("ConfirmOrder err 1", err)
+		return err
+	}
 
+	sqlStatement := `SELECT article FROM products_ordered WHERE order_id=$1;`
+	var article string
+
+	row := DB.QueryRow(sqlStatement, orderId)
+	switch err := row.Scan(&article); err {
+	case sql.ErrNoRows:
+		return models.ErrNoRecord
+	case nil:
+		err2 := updateOrderConfirmedField(orderId)
+		if err2 != nil {
+			return err2
+		}
+		err2 = createNewNonConfirmedOrderByUserId(userId)
+		if err2 != nil {
+			return err2
+		}
+		log.Printf("[order_id: %v] created", orderId)
+	default:
+		panic(err)
+	}
+	return nil
+}
+
+func updateOrderConfirmedField(orderId string) error {
+	_, err := DB.Exec("UPDATE orders SET confirmed = 1 WHERE id = ?;", orderId)
+	if err != nil {
+		fmt.Println("updateOrderConfirmedField err ->", err)
+		return err
+	}
+	return nil
+}
+
+func createNewNonConfirmedOrderByUserId(userId int) error {
+	orderId := uuid.NewV4()
+	_, err := DB.Exec("INSERT INTO orders (id, user_id, confirmed, date_created) VALUES (?,?,?,strftime('%s','now'))",
+		orderId, userId, 0)
+	if err != nil {
+		log.Println("createNonConfirmedOrderByUserId err \t", err)
+		return err
+	}
 	return nil
 }

@@ -68,8 +68,8 @@ func fillDbWithTablesAndAdmin() {
 		date_created INTEGER not null);
 
 	create table orders(
-		id TEXT not null primary key, 
-		user_id INTEGER not null unique,
+		id TEXT not null primary key unique, 
+		user_id INTEGER not null,
 		confirmed INTEGER not null, 
 		date_created INTEGER not null);
 

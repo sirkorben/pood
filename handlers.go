@@ -21,6 +21,10 @@ func enableCors(w *http.ResponseWriter) {
 
 func home(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
 	if r.URL.Path != "/" {
 		helpers.ErrorResponse(w, helpers.NotFoundErrorMsg, http.StatusNotFound)
 		return
@@ -35,6 +39,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+
 	if r.Method == http.MethodPost {
 		var u models.User
 		err := helpers.DecodeJSONBody(w, r, &u)
@@ -70,6 +75,7 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
+
 	if r.Method == http.MethodPost {
 		var u models.User
 		err := helpers.DecodeJSONBody(w, r, &u)
@@ -125,34 +131,44 @@ func signOut(w http.ResponseWriter, r *http.Request) {
 	s, err := db.CheckSession(r)
 	if err != nil {
 		log.Println(err.Error())
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
-		return
-	}
-	err = db.DeleteSession(s.Id)
-	if err != nil {
-		log.Println(err.Error())
-		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:   "session",
-		Value:  "",
-		MaxAge: -1,
-	})
+	if r.Method == http.MethodGet {
+		err = db.DeleteSession(s.Id)
+		if err != nil {
+			log.Println(err.Error())
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:   "session",
+			Value:  "",
+			MaxAge: -1,
+		})
+	}
+
 }
 
 func search(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == http.MethodOptions {
-		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
 		return
 	}
 
-	_, err := db.CheckSession(r)
+	user := &models.User{
+		Id: -1,
+	}
+	s, err := db.CheckSession(r)
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
+	} else {
+		// could be deleted ?? // left here as an example if I need User
+		user = s.User
+		log.Println(fmt.Sprintf("User with [Id - %v] accessed to POST /cart", s.User.Id), user.FirstName)
 	}
 
 	if r.Method == http.MethodPost {
@@ -163,6 +179,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 			helpers.HandleDecodeJSONBodyError(err, w)
 			return
 		}
+		// TODO:
 		// increse the price by 40% - it will be choosen different discount taken from User info set by admin
 		// would be taken from here knowing whos is logged take his percent from field(TODO: add field to users)
 		percent := 1.4
@@ -186,21 +203,22 @@ func search(w http.ResponseWriter, r *http.Request) {
 func admin(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == http.MethodOptions {
-		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
 		return
 	}
-	if r.Method == http.MethodGet || r.Method == http.MethodPatch {
-		_, err := db.CheckAdminSession(r)
-		if err != nil {
-			helpers.ErrorHandler(err, w)
-			return
-		}
-	} else {
-		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
+
+	_, err := db.CheckAdminSession(r)
+	if err != nil {
+		helpers.ErrorHandler(err, w)
+		return
 	}
 }
 
 func adminApproveHandler(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
 	_, err := db.CheckAdminSession(r)
 	if err != nil {
 		helpers.ErrorHandler(err, w)
@@ -241,31 +259,59 @@ func adminApproveHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
 	}
-
 }
 
 func adminOrdersHandler(w http.ResponseWriter, r *http.Request) {
-
+	// show all users' orders
 }
 
 func userOrders(w http.ResponseWriter, r *http.Request) {
-
+	// show user confirmed order by query param
 }
 
-func addProductToCart(w http.ResponseWriter, r *http.Request) {
+func order(w http.ResponseWriter, r *http.Request) {
+	// show user confirmed orders
+}
+
+func shoppingCart(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	user := &models.User{
-		Id: -1,
+	if r.Method == http.MethodOptions {
+		return
 	}
+
 	s, err := db.CheckSession(r)
 	if err != nil {
 		// handle better
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
-	} else {
-		user = s.User
-		log.Println(fmt.Sprintf("User with [Id - %v] accessed to POST /myorders/add", s.User.Id), user.FirstName)
 	}
+
+	if r.Method == http.MethodGet {
+		// show existing non confirmed order for user
+		var shoppingCart models.ShoppingCart
+		shoppingCart.Products, err = db.GetProductsUnderNonConfirmedOrderId(s.User.Id)
+		if err != nil {
+			fmt.Println("\t1")
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		}
+		models.SumPrices(&shoppingCart)
+		helpers.WriteResponse(shoppingCart, w) // check for possible errors
+	}
+}
+
+func addItemToCart(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	s, err := db.CheckSession(r)
+	if err != nil {
+		// handle better
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+		return
+	}
+
 	if r.Method == http.MethodPost {
 		var productToAddIntoCart models.Product
 		err := helpers.DecodeJSONBody(w, r, &productToAddIntoCart)
@@ -281,38 +327,30 @@ func addProductToCart(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func shoppingCart(w http.ResponseWriter, r *http.Request) {
+func confirmCart(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	user := &models.User{
-		Id: -1,
+	if r.Method == http.MethodOptions {
+		return
 	}
+
 	s, err := db.CheckSession(r)
 	if err != nil {
 		// handle better
-		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
-	} else {
-		// could be deleted ??
-		user = s.User
-		log.Println(fmt.Sprintf("User with [Id - %v] accessed to POST /cart", s.User.Id), user.FirstName)
 	}
-	if r.Method == http.MethodGet {
-		// show existing non confirmed order
-		var shoppingCart models.ShoppingCart
-		shoppingCart.Products, err = db.GetProductsUnderNonConfirmedOrderId(s.User.Id)
-		if err != nil {
-			fmt.Println("\t1")
-			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
-		}
-		models.SumPrices(&shoppingCart)
-		helpers.WriteResponse(shoppingCart, w) // check for possible errors
-	}
+
 	if r.Method == http.MethodPost {
-		// confirm existing order
-		// create new non confirmed order for future
-		err = db.ConfirmOrderId(s.User.Id)
+		// confirm non empty cart
+		err = db.ConfirmOrder(s.User.Id)
 		if err != nil {
-			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			if errors.Is(err, models.ErrNoRecord) {
+				helpers.ErrorResponse(w, helpers.EmptyCartErrorMsg, http.StatusBadRequest)
+			} else {
+				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			}
+		} else {
+			helpers.InfoResponse(w, helpers.OrderConfirmedInfoMsg, http.StatusCreated)
 		}
 	}
 }

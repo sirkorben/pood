@@ -15,6 +15,7 @@ import (
 	"pood/helpers"
 
 	_ "github.com/mattn/go-sqlite3"
+	uuid "github.com/satori/go.uuid"
 )
 
 var DB = &sql.DB{}
@@ -54,6 +55,7 @@ func fillDbWithTablesAndAdmin() {
 		// handle error
 		return
 	}
+	// may not product fields be not null ????
 	const CREATE string = `
 	create table users(	
 		id INTEGER not null primary key autoincrement,
@@ -65,10 +67,30 @@ func fillDbWithTablesAndAdmin() {
 		activated INTEGER not null,
 		date_created INTEGER not null);
 
+	create table orders(
+		id TEXT not null primary key, 
+		user_id INTEGER not null unique,
+		confirmed INTEGER not null, 
+		date_created INTEGER not null);
+
+	create table products_ordered(
+		order_id TEXT not null,
+		price REAL not null,
+		article TEXT not null,
+		supplier TEXT not null,
+		supplier_price_num TEXT not null,
+		brand TEXT not null,
+		currency TEXT not null,
+		currency_rate TEXT not null,
+		delivery TEXT not null,
+		weight REAL not null,
+		quantity INTEGER not null,
+		product_quantity_price REAL not null);	
+
 	create table sessions(
 		id TEXT not null primary key, 
 		user_id INTEGER not null unique, 
-		created_date INTEGER not null);
+		date_created INTEGER not null);
 	`
 
 	_, err = DB.Exec(CREATE)
@@ -95,7 +117,21 @@ func fillDbWithTablesAndAdmin() {
 		return
 	}
 	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
-		2, "User", "Activated", "alfa@bravo.com", oneTwoThree, 0, 1)
+		2, "Tolja", "Activnqj", "alfa@bravo.com", oneTwoThree, 0, 1)
+	if err != nil {
+		// handle error
+		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
+		return
+	}
+	orderId := uuid.NewV4()
+	_, err = DB.Exec("INSERT INTO orders (id, user_id, confirmed, date_created) VALUES (?,(SELECT id FROM users WHERE email = ?),?,strftime('%s','now'))",
+		orderId, "alfa@bravo.com", 0)
+	if err != nil {
+		log.Println("sqlite.orders err \t", err)
+	}
+
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
+		3, "Artem", "Non-active", "tema@bravo.com", oneTwoThree, 0, 0)
 	if err != nil {
 		// handle error
 		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
@@ -103,7 +139,7 @@ func fillDbWithTablesAndAdmin() {
 	}
 
 	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
-		3, "Artem", "Bulavin", "bula@bravo.com", oneTwoThree, 0, 0)
+		4, "Fedja", "PassiF", "fedos@bravo.com", oneTwoThree, 0, 0)
 	if err != nil {
 		// handle error
 		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)

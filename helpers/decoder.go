@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -39,4 +40,16 @@ func DecodeJSONBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 		}
 	}
 	return nil
+}
+
+func WriteResponse(any interface{}, w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, err := json.Marshal(any)
+	if err != nil {
+		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
+		ErrorResponse(w, InternalServerErrorMsg, http.StatusInternalServerError)
+		return err
+	}
+	w.Write(jsonResp)
+	return err
 }

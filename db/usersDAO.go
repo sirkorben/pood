@@ -3,9 +3,12 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"pood/helpers"
 	"pood/models"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 func InsertUser(user models.User) error {
@@ -23,11 +26,20 @@ func InsertUser(user models.User) error {
 	if !errors.Is(err, sql.ErrNoRows) {
 		return models.ErrDuplicateEmail
 	}
-
-	_, err = DB.Exec("INSERT INTO users (firstname, lastname, email, password, is_admin, activated) VALUES (?,?,?,?,?,?)",
+	// insert user to db
+	_, err = DB.Exec("INSERT INTO users (firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?, strftime('%s','now'))",
 		firstName, lastName, email, hashedPassword, 0, 0)
 	if err != nil {
 		log.Println("sqlite.InsertUser()", err)
+		return err
+	}
+	// insert his order number and confirmed = 0. when it will be confirmed then create a new one
+	// can be separate function where checks are done in ordersDAO
+	orderId := uuid.NewV4()
+	_, err = DB.Exec("INSERT INTO orders (id, user_id, confirmed, date_created) VALUES (?,(SELECT id FROM users WHERE email = ?),?,strftime('%s','now'))",
+		orderId, email, 0)
+	if err != nil {
+		log.Println("sqlite.orders err \t", err)
 		return err
 	}
 	return nil
@@ -60,7 +72,6 @@ func Authenticate(credName, password string) (int, error) {
 		return 0, err
 	}
 	if activated != 1 {
-		//return error that user is not activated   401
 		return 0, models.ErrUserNotActivated
 	}
 	return id, nil
@@ -97,32 +108,28 @@ func GetFirstNameById(id int) (*models.User, error) {
 func GetNonActivatedUsers() ([]*models.User, error) {
 	var users []*models.User
 
-	rows, err := DB.Query("SELECT id, firstname, lastname, email, date_created FROM users WHERE activated = 0 ORDER BY date_created DESC")
+	rows, err := DB.Query("SELECT id, firstname, lastname, email, activated, date_created FROM users WHERE activated = 0 ORDER BY date_created DESC")
 	if err != nil {
-		//handle error
-		log.Println("1", err)
 		return nil, err
 	}
 	defer rows.Close()
-
 	for rows.Next() {
 		user := &models.User{}
-		err = rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated)
+		err = rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Activated, &user.DateCreated)
 		if err != nil {
-			//handle error
-			log.Println("2", err)
+
 			return nil, err
 		}
-
 		users = append(users, user)
 	}
-	if err != nil {
-		//handle error
-		log.Println("3", err)
-		return nil, err
-	}
-	for _, usr := range users {
-		log.Println(usr)
-	}
 	return users, nil
+}
+
+func ActivateUser(user models.User) error {
+	_, err := DB.Exec("UPDATE users SET activated = 1 WHERE id = ?;", user.Id)
+	if err != nil {
+		fmt.Println("4	", err)
+		return err
+	}
+	return nil
 }

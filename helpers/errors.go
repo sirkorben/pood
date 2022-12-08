@@ -2,7 +2,10 @@ package helpers
 
 import (
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
+	"pood/models"
 )
 
 // big error handling done here
@@ -15,6 +18,29 @@ type ErrorMsg struct {
 
 func (mr *ErrorMsg) Error() string {
 	return mr.ErrorDescription
+}
+
+func ErrorHandler(err error, w http.ResponseWriter) {
+	if err != nil {
+		if errors.Is(err, models.ErrUnauthorized) {
+			ErrorResponse(w, StatusForbiddenErrorMsg, http.StatusForbidden)
+		} else if errors.Is(err, models.ErrNoRecord) {
+			ErrorResponse(w, BadRequestErrorMsg, http.StatusBadRequest)
+		} else {
+			log.Println(err)
+			ErrorResponse(w, UserNotActivatedErrorMsg, http.StatusUnauthorized)
+		}
+	}
+}
+
+func HandleDecodeJSONBodyError(err error, w http.ResponseWriter) {
+	var errMsg *ErrorMsg
+	if errors.As(err, &errMsg) {
+		ErrorResponse(w, *errMsg, http.StatusBadRequest)
+	} else {
+		log.Println("helpers.DecodeJSONBody(w, r, &u)", err)
+		ErrorResponse(w, InternalServerErrorMsg, http.StatusInternalServerError)
+	}
 }
 
 func ErrorResponse(w http.ResponseWriter, errorMsg ErrorMsg, httpStatusCode int) {
@@ -38,6 +64,11 @@ var NotFoundErrorMsg = ErrorMsg{
 var BadRequestErrorMsg = ErrorMsg{
 	ErrorDescription: "Bad Request",
 	ErrorType:        "BAD_REQUEST_ERROR",
+}
+
+var MethodNotAllowedErrorMsg = ErrorMsg{
+	ErrorDescription: "Method not allowed",
+	ErrorType:        "METHOD_NOT_ALLOWED",
 }
 
 var UnauthorizedErrorMsg = ErrorMsg{

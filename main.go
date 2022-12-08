@@ -36,8 +36,12 @@ func routes() *http.ServeMux {
 	sm.HandleFunc("/signin", signIn)
 	sm.HandleFunc("/signout", signOut)
 	sm.HandleFunc("/search", search)
-	sm.HandleFunc("/admin/", adminHandler) //	/admin/approve or /admin/oreders
-	// sm.HandleFunc("/admin/users/", approveRegistration)
+	sm.HandleFunc("/admin/", admin)
+	sm.HandleFunc("/admin/approve", adminApproveHandler)
+	sm.HandleFunc("/admin/orders", adminOrdersHandler)
+	sm.HandleFunc("/myorders", userOrders)
+	sm.HandleFunc("/myorders/add", addProductToCart)
+	sm.HandleFunc("/cart", shoppingCart)
 
 	return sm
 }

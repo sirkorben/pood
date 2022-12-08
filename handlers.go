@@ -8,7 +8,6 @@ import (
 	"pood/db"
 	"pood/helpers"
 	"pood/models"
-	"strings"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -75,13 +74,14 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		err := helpers.DecodeJSONBody(w, r, &u)
 		if err != nil {
-			var errMsg *helpers.ErrorMsg
-			if errors.As(err, &errMsg) {
-				helpers.ErrorResponse(w, *errMsg, http.StatusBadRequest)
-			} else {
-				log.Println("helpers.DecodeJSONBody(w, r, &u)", err)
-				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
-			}
+			helpers.HandleDecodeJSONBodyError(err, w)
+			// var errMsg *helpers.ErrorMsg
+			// if errors.As(err, &errMsg) {
+			// 	helpers.ErrorResponse(w, *errMsg, http.StatusBadRequest)
+			// } else {
+			// 	log.Println("helpers.DecodeJSONBody(w, r, &u)", err)
+			// 	helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			// }
 			return
 		}
 
@@ -145,97 +145,174 @@ func signOut(w http.ResponseWriter, r *http.Request) {
 func search(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == http.MethodOptions {
+		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
 		return
 	}
+
+	_, err := db.CheckSession(r)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		// "article": "045121011hx"  "article": "4M2820160"
+		var article models.Article
+		err := helpers.DecodeJSONBody(w, r, &article)
+		if err != nil {
+			helpers.HandleDecodeJSONBodyError(err, w)
+			return
+		}
+		// increse the price by 40% - it will be choosen different discount taken from User info set by admin
+		// would be taken from here knowing whos is logged take his percent from field(TODO: add field to users)
+		percent := 1.4
+		var prices models.ApiResponse
+		err = helpers.CallForPrices(article.Article, &prices)
+		if err != nil {
+			// handle error
+			log.Println(err)
+			return
+		}
+
+		for _, obj := range prices.Prices {
+			models.ChangePrice(obj, percent)
+		}
+		helpers.WriteResponse(prices, w) // check for possible errors
+	}
+
+}
+
+// admin logic
+func admin(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
+		return
+	}
+	if r.Method == http.MethodGet || r.Method == http.MethodPatch {
+		_, err := db.CheckAdminSession(r)
+		if err != nil {
+			helpers.ErrorHandler(err, w)
+			return
+		}
+	} else {
+		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
+	}
+}
+
+func adminApproveHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := db.CheckAdminSession(r)
+	if err != nil {
+		helpers.ErrorHandler(err, w)
+		return
+	}
+	if r.Method == http.MethodGet {
+		nonActivatedUsersList, err := db.GetNonActivatedUsers()
+		if err != nil {
+			if errors.Is(err, models.ErrNoRecord) {
+				// handle error
+				return
+			}
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+		err = helpers.WriteResponse(nonActivatedUsersList, w)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		}
+
+	} else if r.Method == http.MethodPatch {
+		var userToActivate models.User
+		err := helpers.DecodeJSONBody(w, r, &userToActivate)
+		if err != nil {
+			var errMsg *helpers.ErrorMsg
+			if errors.As(err, &errMsg) {
+				helpers.ErrorResponse(w, *errMsg, http.StatusBadRequest)
+			} else {
+				log.Println("helpers.DecodeJSONBody(w, r, &u)", err)
+				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			}
+			return
+		}
+		err = db.ActivateUser(userToActivate)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		}
+	} else {
+		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
+	}
+
+}
+
+func adminOrdersHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func userOrders(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func addProductToCart(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	user := &models.User{
 		Id: -1,
 	}
 	s, err := db.CheckSession(r)
 	if err != nil {
-		log.Println(err.Error())
+		// handle better
 		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	} else {
 		user = s.User
-		log.Println(fmt.Sprintf("User with [Id - %v] accessed to GET /search", s.User.Id), user.FirstName)
+		log.Println(fmt.Sprintf("User with [Id - %v] accessed to POST /myorders/add", s.User.Id), user.FirstName)
 	}
+	if r.Method == http.MethodPost {
+		var productToAddIntoCart models.Product
+		err := helpers.DecodeJSONBody(w, r, &productToAddIntoCart)
+		if err != nil {
+			helpers.HandleDecodeJSONBodyError(err, w)
+			return
+		}
 
-	// No need to call API everytime
-
-	// if r.Method == http.MethodPost {
-	// 	// TODO: provide CallForPrices with article given by client POST /search
-	// 	article := "045121011hx" // delete it
-	// 	// increse the price by 40% - it will be choosen different discount taken from User info set by admin
-	// 	discount := 1.4
-	// 	var prices models.ApiResponse
-	// 	err := helpers.CallForPrices(article, &prices)
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 		return
-	// 	}
-
-	// 	for _, obj := range prices.Prices {
-	// 		models.ChangePrice(obj, discount)
-	// 	}
-	// 	w.Header().Set("Content-Type", "application/json")
-	// 	jsonResp, err := json.Marshal(prices)
-	// 	if err != nil {
-	// 		log.Fatalf("Error happened in JSON marshal. Err: %s", err)
-	// 		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
-	// 		return
-	// 	}
-	// 	w.Write(jsonResp)
-	// }
-
+		err = db.AddProductToShoppingCart(s.User.Id, productToAddIntoCart)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		}
+	}
 }
 
-// admin logic
-func adminHandler(w http.ResponseWriter, r *http.Request) {
+func shoppingCart(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	if r.Method == http.MethodOptions {
-		return
+	user := &models.User{
+		Id: -1,
 	}
-	_, err := db.CheckAdminSession(r)
+	s, err := db.CheckSession(r)
 	if err != nil {
-		if errors.Is(err, models.ErrUnauthorized) {
-			helpers.ErrorResponse(w, helpers.StatusForbiddenErrorMsg, http.StatusForbidden)
-		} else if errors.Is(err, models.ErrNoRecord) {
-			helpers.ErrorResponse(w, helpers.BadRequestErrorMsg, http.StatusBadRequest)
-		} else {
-			log.Println(err)
-			helpers.ErrorResponse(w, helpers.UserNotActivatedErrorMsg, http.StatusUnauthorized)
-		}
+		// handle better
+		http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 		return
 	} else {
-		log.Println("Admin - entered GET /admin")
+		// could be deleted ??
+		user = s.User
+		log.Println(fmt.Sprintf("User with [Id - %v] accessed to POST /cart", s.User.Id), user.FirstName)
 	}
-	url := strings.Split(strings.Trim(r.URL.Path, "/"), "/") // 	/admin/approve/ -> [admin, approve]
-	if len(url) == 2 && url[1] == "approve" {
-		if r.Method == http.MethodGet {
-			log.Println("Admin - listing non activated users on GET", r.URL.Path)
-			nonActivatedUsers()
+	if r.Method == http.MethodGet {
+		// show existing non confirmed order
+		var shoppingCart models.ShoppingCart
+		shoppingCart.Products, err = db.GetProductsUnderNonConfirmedOrderId(s.User.Id)
+		if err != nil {
+			fmt.Println("\t1")
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 		}
-		if r.Method == http.MethodPatch {
-			log.Println("Admin - activating users on POST", r.URL.Path)
-			adminActivateUser()
+		models.SumPrices(&shoppingCart)
+		helpers.WriteResponse(shoppingCart, w) // check for possible errors
+	}
+	if r.Method == http.MethodPost {
+		// confirm existing order
+		// create new non confirmed order for future
+		err = db.ConfirmOrderId(s.User.Id)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 		}
 	}
-	if len(url) == 2 && url[1] == "orders" { //		/admin/orders/ -> [admin, orders]
-		log.Println("Admin - listing orders", r.URL.Path)
-
-	}
-}
-
-func nonActivatedUsers() ([]*models.User, error) {
-	nonactivatedUsers, err := db.GetNonActivatedUsers()
-	if err != nil {
-		// handle error
-		// handle situation of NoRows
-		return nil, err
-	}
-	return nonactivatedUsers, err
-}
-
-func adminActivateUser() {
-	log.Println("assume we have seen unactivated user, and sending request to update status of chosen user")
 }

@@ -29,9 +29,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 		helpers.ErrorResponse(w, helpers.NotFoundErrorMsg, http.StatusNotFound)
 		return
 	}
-	if r.Method == http.MethodOptions {
-		return
-	}
 }
 
 func signUp(w http.ResponseWriter, r *http.Request) {
@@ -44,13 +41,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 		var u models.User
 		err := helpers.DecodeJSONBody(w, r, &u)
 		if err != nil {
-			var errMsg *helpers.ErrorMsg
-			if errors.As(err, &errMsg) {
-				helpers.ErrorResponse(w, *errMsg, http.StatusBadRequest)
-			} else {
-				log.Println(err)
-				helpers.ErrorResponse(w, *errMsg, http.StatusInternalServerError)
-			}
+			helpers.HandleDecodeJSONBodyError(err, w)
 			return
 		}
 		if helpers.ValidateUserData(w, &u) {
@@ -81,13 +72,6 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 		err := helpers.DecodeJSONBody(w, r, &u)
 		if err != nil {
 			helpers.HandleDecodeJSONBodyError(err, w)
-			// var errMsg *helpers.ErrorMsg
-			// if errors.As(err, &errMsg) {
-			// 	helpers.ErrorResponse(w, *errMsg, http.StatusBadRequest)
-			// } else {
-			// 	log.Println("helpers.DecodeJSONBody(w, r, &u)", err)
-			// 	helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
-			// }
 			return
 		}
 
@@ -99,7 +83,6 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 			} else if errors.Is(err, models.ErrUserNotActivated) {
 				helpers.ErrorResponse(w, helpers.UserNotActivatedErrorMsg, http.StatusUnauthorized)
 			} else {
-				log.Println("db.Authenticate(credential, u.Password)", err)
 				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			}
 			return
@@ -114,7 +97,6 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, c)
 		err = db.InsertSession(c.Value, id)
 		if err != nil {
-			log.Println(err.Error())
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			return
 		}
@@ -130,7 +112,6 @@ func signOut(w http.ResponseWriter, r *http.Request) {
 	}
 	s, err := db.CheckSession(r)
 	if err != nil {
-		log.Println(err.Error())
 		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
 	}
@@ -186,8 +167,8 @@ func search(w http.ResponseWriter, r *http.Request) {
 		var prices models.ApiResponse
 		err = helpers.CallForPrices(article.Article, &prices)
 		if err != nil {
-			// handle error
 			log.Println(err)
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			return
 		}
 
@@ -229,6 +210,8 @@ func adminApproveHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			if errors.Is(err, models.ErrNoRecord) {
 				// handle error
+				log.Println("adminApproveHandler -> MethodGet -> nonActivatedUserList, err := ")
+				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 				return
 			}
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
@@ -281,7 +264,6 @@ func shoppingCart(w http.ResponseWriter, r *http.Request) {
 
 	s, err := db.CheckSession(r)
 	if err != nil {
-		// handle better
 		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
 	}
@@ -301,7 +283,7 @@ func shoppingCart(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		models.CreateShoppingCart(&shoppingCart, orderId)
-		helpers.WriteResponse(shoppingCart, w) // check for possible errors
+		helpers.WriteResponse(shoppingCart, w)
 	}
 }
 
@@ -313,7 +295,6 @@ func addItemToCart(w http.ResponseWriter, r *http.Request) {
 
 	s, err := db.CheckSession(r)
 	if err != nil {
-		// handle better
 		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
 	}
@@ -341,13 +322,11 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 
 	s, err := db.CheckSession(r)
 	if err != nil {
-		// handle better
 		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
 	}
 
 	if r.Method == http.MethodPost {
-		// confirm non empty cart
 		err = db.ConfirmOrder(s.User.Id)
 		if err != nil {
 			if errors.Is(err, models.ErrNoRecord) {
@@ -369,13 +348,11 @@ func removeCart(w http.ResponseWriter, r *http.Request) {
 
 	_, err := db.CheckSession(r)
 	if err != nil {
-		// handle better
 		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
 	}
 
 	if r.Method == http.MethodDelete {
-		// remove whole cart = remove positions from products_ordered by order_id and position_id
 		var shoppingCartOrderId models.OrderId
 		err := helpers.DecodeJSONBody(w, r, &shoppingCartOrderId)
 		if err != nil {
@@ -394,13 +371,11 @@ func removeItemFromCart(w http.ResponseWriter, r *http.Request) {
 
 	_, err := db.CheckSession(r)
 	if err != nil {
-		// handle better
 		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 		return
 	}
 
 	if r.Method == http.MethodDelete {
-		// remove item from products_ordered
 		var shoppingCartPositionId models.PositionId
 		err := helpers.DecodeJSONBody(w, r, &shoppingCartPositionId)
 		if err != nil {

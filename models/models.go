@@ -49,7 +49,6 @@ type OnePrice struct {
 	CurrencyRate     string  `json:"currency_rate,omitempty"`
 	Delivery         string  `json:"delivery,omitempty"`
 	Weight           float64 `json:"weight,omitempty"`
-	// Name             string  `json:"name,omitempty"`
 }
 
 func ChangePrice(op *OnePrice, percent float64) {
@@ -58,6 +57,7 @@ func ChangePrice(op *OnePrice, percent float64) {
 
 // shopping cart and products in there
 type Product struct {
+	PositionId           string  `json:"position_id,omitempty"`
 	Price                float64 `json:"price,omitempty"`
 	Article              string  `json:"article,omitempty"`
 	Supplier             string  `json:"supplier,omitempty"`
@@ -67,21 +67,34 @@ type Product struct {
 	CurrencyRate         string  `json:"currency_rate,omitempty"`
 	Delivery             string  `json:"delivery,omitempty"`
 	Weight               float64 `json:"weight,omitempty"`
-	Quantity             int     `json:"quantity"` // should not be empty
+	Quantity             int     `json:"quantity"` // should not be empty; quantity should = 1 by default
 	ProductQuantityPrice float64 `json:"product_quantity_price,omitempty"`
 }
 
 type ShoppingCart struct {
-	TotalPrice float64    `json:"total_price,omitempty"`
-	Products   []*Product `json:"products,omitempty"`
+	OrderId    string     `json:"order_id"`
+	TotalPrice float64    `json:"total_price"`
+	Products   []*Product `json:"products"`
 }
 
-func SumPrices(sc *ShoppingCart) {
+func CreateShoppingCart(sc *ShoppingCart, orderId string) {
+	sc.OrderId = orderId
 	for _, prod := range sc.Products {
 		sc.TotalPrice += prod.ProductQuantityPrice
 	}
 }
 
+// POST /search
 type Article struct {
 	Article string `json:"article"`
+}
+
+// POST /cart/removeitem
+type PositionId struct {
+	PositionId string `json:"position_id"`
+}
+
+// POST /cart/remove
+type OrderId struct {
+	OrderId string `json:"order_id"`
 }

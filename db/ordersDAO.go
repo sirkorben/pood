@@ -101,11 +101,11 @@ func ConfirmOrder(userId int) error {
 		return err
 	}
 
-	sqlStatement := `SELECT article FROM products_ordered WHERE order_id=$1;`
-	var article string
+	sqlStatement := `SELECT position_id FROM positions_ordered WHERE order_id=$1;`
+	var positionId string
 
 	row := DB.QueryRow(sqlStatement, orderId)
-	switch err := row.Scan(&article); err {
+	switch err := row.Scan(&positionId); err {
 	case sql.ErrNoRows:
 		return models.ErrNoRecord
 	case nil:
@@ -139,6 +139,24 @@ func createNewNonConfirmedOrderByUserId(userId int) error {
 		orderId, userId, 0)
 	if err != nil {
 		log.Println("createNonConfirmedOrderByUserId err \t", err)
+		return err
+	}
+	return nil
+}
+
+func DeleteShoppingCart(orderId string) error {
+	_, err := DB.Exec("delete from positions_ordered where order_id = ?", orderId)
+	if err != nil && err != sql.ErrNoRows {
+		log.Println("DeleteShoppingCartByOrderId err -> ", err)
+		return err
+	}
+	return nil
+}
+
+func DeletePositionFromCart(positionId string) error {
+	_, err := DB.Exec("delete from positions_ordered where position_id = ?", positionId)
+	if err != nil && err != sql.ErrNoRows {
+		log.Println("DeleteShoppingCartByOrderId err -> ", err)
 		return err
 	}
 	return nil

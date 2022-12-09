@@ -31,19 +31,21 @@ func routes() *http.ServeMux {
 	sm := http.NewServeMux()
 	sm.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 	sm.Handle("/templates/", http.StripPrefix("/templates/", http.FileServer(http.Dir("./templates/"))))
-	sm.HandleFunc("/", home)
-	sm.HandleFunc("/signup", signUp)
-	sm.HandleFunc("/signin", signIn)
-	sm.HandleFunc("/signout", signOut)
-	sm.HandleFunc("/search", search)
-	sm.HandleFunc("/admin/", admin)
-	sm.HandleFunc("/admin/approve", adminApproveHandler)
-	sm.HandleFunc("/admin/orders", adminOrdersHandler)
-	sm.HandleFunc("/myorders", userOrders) // GET to show confirmed orders of user
-	sm.HandleFunc("/order", order)
-	sm.HandleFunc("/cart", shoppingCart)
-	sm.HandleFunc("/cart/add", addItemToCart)
-	sm.HandleFunc("/cart/confirm", confirmCart)
+	sm.HandleFunc("/", home)                              // GET
+	sm.HandleFunc("/signup", signUp)                      // GET, POST
+	sm.HandleFunc("/signin", signIn)                      // GET, POST
+	sm.HandleFunc("/signout", signOut)                    // POST
+	sm.HandleFunc("/search", search)                      // GET, POST
+	sm.HandleFunc("/admin/", admin)                       // GET
+	sm.HandleFunc("/admin/approve", adminApproveHandler)  // GET, PATCH
+	sm.HandleFunc("/admin/orders", adminOrdersHandler)    // GET, PATCH(not implemented)
+	sm.HandleFunc("/myorders", userOrders)                // GET
+	sm.HandleFunc("/order", order)                        // GET
+	sm.HandleFunc("/cart", shoppingCart)                  // GET, POST
+	sm.HandleFunc("/cart/add", addItemToCart)             // POST
+	sm.HandleFunc("/cart/confirm", confirmCart)           // POST
+	sm.HandleFunc("/cart/remove", removeCart)             // DELETE
+	sm.HandleFunc("/cart/removeitem", removeItemFromCart) // DELETE
 
 	return sm
 }

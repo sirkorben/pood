@@ -289,12 +289,18 @@ func shoppingCart(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		// show existing non confirmed order for user
 		var shoppingCart models.ShoppingCart
-		shoppingCart.Products, err = db.GetProductsUnderNonConfirmedOrderId(s.User.Id)
+		orderId, err := db.GetNonConfirmedOrderId(s.User.Id)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+		shoppingCart.Products, err = db.GetProductsUnderNonConfirmedOrderId(s.User.Id, orderId)
 		if err != nil {
 			fmt.Println("\t1")
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
 		}
-		models.SumPrices(&shoppingCart)
+		models.CreateShoppingCart(&shoppingCart, orderId)
 		helpers.WriteResponse(shoppingCart, w) // check for possible errors
 	}
 }
@@ -352,5 +358,55 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 		} else {
 			helpers.InfoResponse(w, helpers.OrderConfirmedInfoMsg, http.StatusCreated)
 		}
+	}
+}
+
+func removeCart(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	_, err := db.CheckSession(r)
+	if err != nil {
+		// handle better
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+		return
+	}
+
+	if r.Method == http.MethodDelete {
+		// remove whole cart = remove positions from products_ordered by order_id and position_id
+		var shoppingCartOrderId models.OrderId
+		err := helpers.DecodeJSONBody(w, r, &shoppingCartOrderId)
+		if err != nil {
+			helpers.HandleDecodeJSONBodyError(err, w)
+			return
+		}
+		db.DeleteShoppingCart(shoppingCartOrderId.OrderId)
+	}
+}
+
+func removeItemFromCart(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	_, err := db.CheckSession(r)
+	if err != nil {
+		// handle better
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+		return
+	}
+
+	if r.Method == http.MethodDelete {
+		// remove item from products_ordered
+		var shoppingCartPositionId models.PositionId
+		err := helpers.DecodeJSONBody(w, r, &shoppingCartPositionId)
+		if err != nil {
+			helpers.HandleDecodeJSONBodyError(err, w)
+			return
+		}
+		db.DeletePositionFromCart(shoppingCartPositionId.PositionId)
 	}
 }

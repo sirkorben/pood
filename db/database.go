@@ -73,7 +73,8 @@ func fillDbWithTablesAndAdmin() {
 		confirmed INTEGER not null, 
 		date_created INTEGER not null);
 
-	create table products_ordered(
+	create table positions_ordered(
+		position_id INTEGER not null primary key autoincrement,
 		order_id TEXT not null,
 		price REAL not null,
 		article TEXT not null,

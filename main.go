@@ -40,7 +40,7 @@ func routes() *http.ServeMux {
 	sm.HandleFunc("/admin/approve", adminApproveHandler)  // GET, PATCH
 	sm.HandleFunc("/admin/orders", adminOrdersHandler)    // GET, PATCH(not implemented)
 	sm.HandleFunc("/myorders", userOrders)                // GET
-	sm.HandleFunc("/order", order)                        // GET
+	sm.HandleFunc("/order", order)                        // GET by query parameter
 	sm.HandleFunc("/cart", shoppingCart)                  // GET, POST
 	sm.HandleFunc("/cart/add", addItemToCart)             // POST
 	sm.HandleFunc("/cart/confirm", confirmCart)           // POST

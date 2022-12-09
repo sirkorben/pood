@@ -249,11 +249,52 @@ func adminOrdersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func userOrders(w http.ResponseWriter, r *http.Request) {
-	// show user confirmed order by query param
+	// show user confirmed orders
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	s, err := db.CheckSession(r)
+	if err != nil {
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+		return
+	}
+
+	if r.Method == http.MethodGet {
+		var userOrders models.UserOrders
+		userOrders.Orders, err = db.GetConfirmedUserOrders(s.User.Id)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+			return
+		}
+		helpers.WriteResponse(userOrders, w)
+	}
 }
 
 func order(w http.ResponseWriter, r *http.Request) {
-	// show user confirmed orders
+	// show user confirmed order by query param /order?id=8d6a4012-98e9-4a38-82e3-c27f6fbbf419
+	enableCors(&w)
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	s, err := db.CheckSession(r)
+	if err != nil {
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+		return
+	}
+
+	orderId := r.URL.Query().Get("id") // handle execptions
+	var order models.UserOrder
+	models.CollectUserOrder(&order, orderId)
+	order.Positions, err = db.GetProductsUnderNonConfirmedOrderId(s.User.Id, orderId)
+	if err != nil {
+		fmt.Println("\t1")
+		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		return
+	}
+	helpers.WriteResponse(order, w)
 }
 
 func shoppingCart(w http.ResponseWriter, r *http.Request) {
@@ -315,6 +356,9 @@ func addItemToCart(w http.ResponseWriter, r *http.Request) {
 }
 
 func confirmCart(w http.ResponseWriter, r *http.Request) {
+
+	//	TODO: send information about confirmed order to client and admin emails
+
 	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return

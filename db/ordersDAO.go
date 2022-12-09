@@ -161,3 +161,37 @@ func DeletePositionFromCart(positionId string) error {
 	}
 	return nil
 }
+
+func GetConfirmedUserOrders(userId int) ([]string, error) {
+	rows, err := DB.Query("select id from orders WHERE confirmed = 1 ORDER BY date_created desc")
+	if err != nil {
+		// handle error
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var userOrders []string
+	for rows.Next() {
+		var orderId string
+		err = rows.Scan(&orderId)
+		if err != nil {
+			// handle err
+			// return nil, err
+			log.Println(err)
+			return nil, err
+		}
+		userOrders = append(userOrders, orderId)
+	}
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return userOrders, nil
+}
+
+func GetConfirmedUserOrder(orderId string) (models.UserOrder, error) {
+	var order models.UserOrder
+
+	return order, nil
+}

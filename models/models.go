@@ -98,3 +98,19 @@ type PositionId struct {
 type OrderId struct {
 	OrderId string `json:"order_id"`
 }
+
+// GET /myorders
+type UserOrders struct {
+	Orders []string `json:"orders"`
+}
+
+// POST /order
+type UserOrder struct {
+	OrderId     string     `json:"order_id"`
+	DateCreated int        `json:"date_created"`
+	Positions   []*Product `json:"positions"`
+}
+
+func CollectUserOrder(order *UserOrder, orderId string) {
+	order.OrderId = orderId
+}

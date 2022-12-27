@@ -149,7 +149,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// could be deleted ?? // left here as an example if I need User
 		user = s.User
-		log.Println(fmt.Sprintf("User with [Id - %v] accessed to POST /cart", s.User.Id), user.FirstName)
+		log.Println(fmt.Sprintf("User with [Id - %v] accessed /search endpoint", s.User.Id), user.FirstName)
 	}
 
 	if r.Method == http.MethodPost {
@@ -160,24 +160,27 @@ func search(w http.ResponseWriter, r *http.Request) {
 			helpers.HandleDecodeJSONBodyError(err, w)
 			return
 		}
-		// TODO:
-		// increse the price by 40% - it will be choosen different discount taken from User info set by admin
-		// would be taken from here knowing whos is logged take his percent from field(TODO: add field to users)
-		percent := 1.4
-		var prices models.ApiResponse
-		err = helpers.CallForPrices(article.Article, &prices)
-		if err != nil {
-			log.Println(err)
-			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
-			return
-		}
+		if helpers.ValidateSearchByArticle(article) {
+			// TODO:
+			// increse the price by 40% - it will be choosen different discount taken from User info set by admin
+			// would be taken from here knowing whos is logged take his percent from field(TODO: add field to users)
+			percent := 1.4
+			var prices models.ApiResponse
+			err = helpers.CallForPrices(article.Article, &prices)
+			if err != nil {
+				log.Println(err)
+				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+				return
+			}
 
-		for _, obj := range prices.Prices {
-			models.ChangePrice(obj, percent)
+			for _, obj := range prices.Prices {
+				models.ChangePrice(obj, percent)
+			}
+			helpers.WriteResponse(prices, w) // check for possible errors
+		} else {
+			helpers.ErrorResponse(w, helpers.BadRequestErrorMsg, http.StatusBadRequest)
 		}
-		helpers.WriteResponse(prices, w) // check for possible errors
 	}
-
 }
 
 // admin logic
@@ -263,7 +266,7 @@ func userOrders(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		var userOrders models.UserOrders
-		userOrders.Orders, err = db.GetConfirmedUserOrders(s.User.Id)
+		userOrders.Orders, err = db.GetConfirmedUserOrders2(s.User.Id)
 		if err != nil {
 			helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 			return
@@ -287,10 +290,14 @@ func order(w http.ResponseWriter, r *http.Request) {
 
 	orderId := r.URL.Query().Get("id") // handle execptions
 	var order models.UserOrder
-	models.CollectUserOrder(&order, orderId)
 	order.Positions, err = db.GetProductsUnderNonConfirmedOrderId(s.User.Id, orderId)
 	if err != nil {
-		fmt.Println("\t1")
+		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		return
+	}
+	dateCreated, err := db.GetOrderDateCreated(s.User.Id, orderId)
+	models.CollectUserOrder(&order, orderId, dateCreated)
+	if err != nil {
 		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 		return
 	}
@@ -371,16 +378,38 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		err = db.ConfirmOrder(s.User.Id)
+		orderId, err := db.ConfirmOrder(s.User.Id)
 		if err != nil {
 			if errors.Is(err, models.ErrNoRecord) {
 				helpers.ErrorResponse(w, helpers.EmptyCartErrorMsg, http.StatusBadRequest)
 			} else {
 				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			}
-		} else {
-			helpers.InfoResponse(w, helpers.OrderConfirmedInfoMsg, http.StatusCreated)
+			return
 		}
+
+		var order models.UserOrder
+		order.Positions, err = db.GetProductsUnderNonConfirmedOrderId(s.User.Id, orderId)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+		dateCreated, err := db.GetOrderDateCreated(s.User.Id, orderId)
+		models.CollectUserOrder(&order, orderId, dateCreated)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+
+		err = helpers.SendEmail(order)
+		if err != nil {
+			log.Println("helpers.SendEmail err -> ", err)
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+		log.Println("email sent")
+		helpers.InfoResponse(w, helpers.OrderConfirmedInfoMsg, http.StatusCreated)
+
 	}
 }
 

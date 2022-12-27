@@ -46,3 +46,7 @@ func ValidateUserData(w http.ResponseWriter, user *models.User) bool {
 	}
 	return true
 }
+
+func ValidateSearchByArticle(article models.Article) bool {
+	return article.Article != ""
+}

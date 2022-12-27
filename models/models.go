@@ -37,7 +37,7 @@ type Session struct {
 
 // third party API response struct
 type ApiResponse struct {
-	Prices []*OnePrice
+	Prices []*OnePrice `json:"prices,omitempty"`
 }
 type OnePrice struct {
 	Price            float64 `json:"price,omitempty"`
@@ -101,16 +101,17 @@ type OrderId struct {
 
 // GET /myorders
 type UserOrders struct {
-	Orders []string `json:"orders"`
+	Orders []*UserOrder `json:"orders"`
 }
 
 // POST /order
 type UserOrder struct {
 	OrderId     string     `json:"order_id"`
 	DateCreated int        `json:"date_created"`
-	Positions   []*Product `json:"positions"`
+	Positions   []*Product `json:"positions,omitempty"`
 }
 
-func CollectUserOrder(order *UserOrder, orderId string) {
+func CollectUserOrder(order *UserOrder, orderId string, dateCreated int) {
 	order.OrderId = orderId
+	order.DateCreated = dateCreated
 }

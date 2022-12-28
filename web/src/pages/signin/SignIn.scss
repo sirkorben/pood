@@ -1,0 +1,63 @@
+:root {
+  --maincolor: linear-gradient(to right, #305ab3, #d7a7f0);
+  --secondarycolor: rgb(85, 116, 219);
+}
+
+.formContainer {
+  /* background: var(--maincolor); */
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.formWrapper {
+  background-color: white;
+  padding: 20px 60px;
+  border-radius: 10px;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+
+  .title {
+    color: var(--secondarycolor);
+    font-weight: bold;
+    font-size: 24px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    input {
+      font-size: 15px;
+      padding: 15px;
+      border: none;
+      width: 250px;
+      border-bottom: 1px solid var(--secondarycolor);
+      outline: none;
+      &::placeholder {
+        color: rgb(76, 104, 104);
+      }
+    }
+
+    button {
+      border: none;
+      border-radius: 5px;
+      background-color: rgb(112, 125, 146);
+      padding: 10px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      &:hover {
+        background-color: rgb(85, 116, 219);
+      }
+    }
+  }
+  p {
+    color: rgb(112, 125, 146);
+    font-size: 12px;
+    margin-top: 10px;
+  }
+}

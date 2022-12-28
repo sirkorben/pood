@@ -40,7 +40,10 @@ const Form = () => {
           withcredentials: true,
         }
       )
-      .then(() => setRegistered(true))
+      .then(() => {
+        setRegistered(true)
+        return <ApproveMessage />
+      })
       .catch((error) => {
         toast.error(error.response["data"]["error_description"], {
           position: "top-right",
@@ -58,44 +61,55 @@ const Form = () => {
   }
   console.log("err ", err)
   return (
-    <div>
-      <div>
+    <div className="formContainer">
+      <div className="formWrapper">
         {registered ? (
-          <h2>Вашая заявка будет рассмотрена администратором сайта</h2>
+          <ApproveMessage className="approve" />
         ) : (
           <div>
+            {" "}
+            <span className="title">Sign Up</span>
             <form onSubmit={handleSubmit}>
-              <label>First name</label>
               <input
                 type="text"
+                placeholder="Firstname"
                 onChange={(e) => setFirstname(e.target.value)}
               />
-              <br />
-              <label>Last name</label>
               <input
                 type="text"
+                placeholder="Lastname"
                 onChange={(e) => setLastname(e.target.value)}
               />
-              <br />
-              <label>Email</label>
-              <input type="email" onChange={(e) => setEmail(e.target.value)} />
-              <br />
-              <label>Password</label>
+
               <input
-                type="text"
+                type="email"
+                placeholder="Email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+
+              <input
+                id="password"
+                type="password"
+                placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <br />
-              <label>Confirm password</label>
-              <input type="text" onChange={(e) => setConfirm(e.target.value)} />
-              <br />
+              <input type="password" placeholder="Confirm password" />
               <button>Sign Up</button>
-              <br />
-              or <Link to={"/signin"}>Sign In</Link>
             </form>
+            <p>
+              Already have an account? <Link to={"/signin"}>Login</Link>
+            </p>
           </div>
         )}
       </div>
+    </div>
+  )
+}
+
+const ApproveMessage = () => {
+  return (
+    <div className="approve">
+      <p>Ваша заявка будет рассмотрена администратором сайта</p>
     </div>
   )
 }

@@ -1,3 +1,7 @@
+:root {
+  --maincolor: linear-gradient(to right, #305ab3, #d7a7f0);
+}
+
 .App {
   text-align: center;
 }
@@ -35,4 +39,8 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+body {
+  background: var(--maincolor);
 }

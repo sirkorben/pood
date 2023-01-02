@@ -6,14 +6,16 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 )
 
-func CallForPrices(article string, dst interface{}) error {
-	//TODO: hide apiKey in env vars
-	apiKey := "f22d9a0a6a65a45e5fe9cd652deb0e98e9051b286d36709ae12d1900da516c10"
-	interpolatedString := fmt.Sprintf("https://originalparts.pro/api/search?apiKey=%v&article=%v", apiKey, article)
+func ApiCall(article string, dst interface{}) error {
+	apiKey := os.Getenv("API_KEY")
+	apiLink := os.Getenv("API_LINK")
+	interpolatedApiLink := fmt.Sprintf("%vapiKey=%v&article=%v", apiLink, apiKey, article)
+
 	client := http.Client{}
-	req, err := http.NewRequest("GET", interpolatedString, nil)
+	req, err := http.NewRequest("GET", interpolatedApiLink, nil)
 	if err != nil {
 		log.Println("ERROR IN WRAPPING REQUEST TO API", err)
 		return err

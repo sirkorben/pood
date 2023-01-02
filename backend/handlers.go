@@ -66,7 +66,7 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
-
+	log.Println("somebody signed in after cors check")
 	if r.Method == http.MethodPost {
 		var u models.User
 		err := helpers.DecodeJSONBody(w, r, &u)
@@ -166,7 +166,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 			// would be taken from here knowing whos is logged take his percent from field(TODO: add field to users)
 			percent := 1.4
 			var prices models.ApiResponse
-			err = helpers.CallForPrices(article.Article, &prices)
+			err = helpers.ApiCall(article.Article, &prices)
 			if err != nil {
 				log.Println(err)
 				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
@@ -318,6 +318,7 @@ func shoppingCart(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		// show existing non confirmed order for user
+		// TODO: add empty non confirmed order if doesnt exist
 		var shoppingCart models.ShoppingCart
 		orderId, err := db.GetNonConfirmedOrderId(s.User.Id)
 		if err != nil {

@@ -49,8 +49,8 @@ func fileExists(filename string) bool {
 }
 
 func fillDbWithTablesAndAdmin() {
-
-	adminPass, err := helpers.GeneratePassword("dummyPassWillBeTakenFromLocalEnvOrSomeHow")
+	adminEmail := os.Getenv("POOD_ADMIN_EMAIL")
+	adminPass, err := helpers.GeneratePassword(os.Getenv("POOD_ADMIN_PASSWORD"))
 	if err != nil {
 		// handle error
 		return
@@ -103,15 +103,21 @@ func fillDbWithTablesAndAdmin() {
 	}
 
 	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
-		1, "Daniil", "Batjkovich", "danic@prostoSobaka.com", adminPass, 1, 1)
+		1, "Daniil", "Batjkovich", adminEmail, adminPass, 1, 1)
 	if err != nil {
 		// handle error
 		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
 		return
 	}
 
-	// delete two users below
-	// delete passwords
+	orderIdForAdmin := uuid.NewV4()
+	_, err = DB.Exec("INSERT INTO orders (id, user_id, confirmed, date_created) VALUES (?,(SELECT id FROM users WHERE email = ?),?,strftime('%s','now'))",
+		orderIdForAdmin, adminEmail, 0)
+	if err != nil {
+		log.Println("sqlite.orders err \t", err)
+	}
+
+	// delete users below
 	oneTwoThree, err := helpers.GeneratePassword("123456")
 	if err != nil {
 		// handle error
@@ -124,6 +130,7 @@ func fillDbWithTablesAndAdmin() {
 		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
 		return
 	}
+
 	orderId := uuid.NewV4()
 	_, err = DB.Exec("INSERT INTO orders (id, user_id, confirmed, date_created) VALUES (?,(SELECT id FROM users WHERE email = ?),?,strftime('%s','now'))",
 		orderId, "alfa@bravo.com", 0)
@@ -146,4 +153,5 @@ func fillDbWithTablesAndAdmin() {
 		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
 		return
 	}
+	log.Println("db created")
 }

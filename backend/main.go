@@ -8,44 +8,39 @@ import (
 )
 
 func main() {
+	log.Println("hey")
 
-	//logging ??
-	// log to custom file
-	LOG_FILE := "./testlogfile"
-	// open log file
-	logFile, err := os.OpenFile(LOG_FILE, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-	if err != nil {
-		log.Panic(err)
-	}
-	defer logFile.Close()
-
-	// Set log out put and enjoy :)
-	log.SetOutput(logFile)
-
-	// optional: log date-time, filename, and line number
-	log.SetFlags(log.Lshortfile | log.LstdFlags)
-
-	log.Println("Logging to custom file")
-	//logging
+	// writing to file make it difficult to trouble shoot why conteiner wont go up
+	// LOG_FILE := "./app_logs"
+	// logFile, err := os.OpenFile(LOG_FILE, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+	// if err != nil {
+	// 	log.Panic(err)
+	// }
+	// defer logFile.Close()
+	// log.SetOutput(logFile)
+	// log.SetFlags(log.Lshortfile | log.LstdFlags)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
-	errorLog.SetOutput(logFile)
+	// errorLog.SetOutput(logFile)
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	infoLog.SetOutput(logFile)
+	// infoLog.SetOutput(logFile)
+
+	// problem with passing env variables to container
+	setENV() // for local dev
 
 	s := &http.Server{
 		Addr:     ":8080",
 		ErrorLog: errorLog,
 		Handler:  routes(),
 	}
+
 	infoLog.Println("Starting at http://localhost" + s.Addr)
 
 	db.InitDatabase()
 	defer db.DB.Close()
 
 	err2 := s.ListenAndServe()
-	if err != nil {
-		errorLog.Println("I am from Alex")
-		log.Fatal(err2)
+	if err2 != nil {
+		errorLog.Fatal(err2)
 	}
 }
 

@@ -7,8 +7,8 @@ COPY . .
 RUN go mod download
 RUN go build -o /app .
 
-FROM debian:buster-slim
-COPY --from=builder /app /app
-# EXPOSE 4000
+# FROM debian:buster-slim
+# COPY --from=builder /app /app
+EXPOSE 8080
 
-ENTRYPOINT ["/app"]
+CMD /app

@@ -5,18 +5,21 @@ import (
 	"log"
 	"math"
 	"net/smtp"
+	"os"
 	"pood/models"
 )
 
 func SendEmail(order models.UserOrder) error {
+	// finish the logic send email to the client postbox
+
 	log.Println(order)
 	var orderString = fmt.Sprintf("\nOrder Id - %v\n", order.OrderId)
 	for _, position := range order.Positions {
 		orderString += template(position)
 	}
 	log.Println(orderString)
-	from := "vejlevas@gmail.com"
-	password := "gqjqodxvgybqhwss"
+	from := os.Getenv("POOD_ADMIN_EMAIL")
+	password := os.Getenv("POOD_EMAIL_PASSWORD")
 
 	toEmailAddress := "vejlevas@gmail.com"
 	to := []string{toEmailAddress}

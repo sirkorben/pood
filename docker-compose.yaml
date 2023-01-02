@@ -1,0 +1,47 @@
+# version: "3"
+
+# services:
+#   backend:
+#     # environment:
+#       # ENV_VAR: "${ENV_VAR}"
+#       # API_KEY: "${API_KEY}"
+#       # API_LINK: "${API_LINK}"
+#       # POOD_ADMIN_PASSWORD: "${POOD_ADMIN_PASSWORD}"
+#       # POOD_ADMIN_EMAIL: "${POOD_ADMIN_EMAIL}"
+#       # POOD_EMAIL_PASSWORD: "${POOD_EMAIL_PASSWORD}"
+#     build:
+#       context: backend
+#     ports:
+#       - 8080:8080 # if I dont specify this, front would not connect
+#   frontend:
+#     build:
+#       context: web
+#     environment:
+#     - REACT_APP_BACKEND_URL=http://backend:8080
+#     depends_on:
+#       - backend 
+#     ports:
+#       - 3000:3000
+
+
+version: '3'
+services:
+  backend:
+    build: backend
+    ports:
+      - 8080:8080
+    networks:
+      - app-network
+  frontend:
+    build: web
+    ports:
+      - 3000:3000
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:8080
+    depends_on:
+      - backend
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge

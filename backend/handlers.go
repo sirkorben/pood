@@ -29,7 +29,7 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodPost {
-		var u models.User
+		var u models.UserRegistered
 		err := helpers.DecodeJSONBody(w, r, &u)
 		if err != nil {
 			helpers.HandleDecodeJSONBodyError(err, w)

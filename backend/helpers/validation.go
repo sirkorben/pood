@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func ValidateUserData(w http.ResponseWriter, user *models.User) bool {
+func ValidateUserData(w http.ResponseWriter, user *models.UserRegistered) bool {
 	space := regexp.MustCompile(`\s+`)
 	user.FirstName = space.ReplaceAllString(strings.TrimSpace(user.FirstName), " ")
 	user.LastName = space.ReplaceAllString(strings.TrimSpace(user.LastName), " ")
@@ -31,6 +31,11 @@ func ValidateUserData(w http.ResponseWriter, user *models.User) bool {
 
 	if user.Password == "" {
 		ErrorResponse(w, PasswordMissingErrorMsg, http.StatusBadRequest)
+		return false
+	}
+
+	if user.Password != user.ConfirmedPassword {
+		ErrorResponse(w, PasswordsDoNotMatchErrorMsg, http.StatusBadRequest)
 		return false
 	}
 

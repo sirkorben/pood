@@ -11,7 +11,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func InsertUser(user models.User) error {
+func InsertUser(user models.UserRegistered) error {
 	firstName := user.FirstName
 	lastName := user.LastName
 	email := user.Email

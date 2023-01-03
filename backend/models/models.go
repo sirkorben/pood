@@ -15,6 +15,14 @@ var (
 	ErrInternalServerError = errors.New("server: internal server error")
 )
 
+type UserRegistered struct {
+	FirstName         string `json:"firstname"`
+	LastName          string `json:"lastname"`
+	Email             string `json:"email"`
+	Password          string `json:"password"`
+	ConfirmedPassword string `json:"confirmed_password"`
+}
+
 type User struct {
 	Id             int    `json:"id,omitempty"`
 	FirstName      string `json:"firstname,omitempty"`

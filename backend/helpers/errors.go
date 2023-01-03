@@ -109,6 +109,10 @@ var PasswordMissingErrorMsg = ErrorMsg{
 	ErrorDescription: "Password is missing",
 	ErrorType:        "PASSWORD_FIELD_EMPTY",
 }
+var PasswordsDoNotMatchErrorMsg = ErrorMsg{
+	ErrorDescription: "Passwords do not match",
+	ErrorType:        "PASSWORDS_DO_NOT_MATCH",
+}
 var PasswordTooShortErrorMsg = ErrorMsg{
 	ErrorDescription: "Password is too short - 6 chars min",
 	ErrorType:        "PASSWORD_TOO_SHORT",

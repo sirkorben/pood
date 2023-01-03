@@ -23,7 +23,7 @@ type User struct {
 	Password       string `json:"password,omitempty"`
 	HashedPassword []byte `json:"-"`
 	Activated      *int   `json:"activated,omitempty"`
-	// IsAdmin        int    `json:"is_admin,omitempty"`
+	IsAdmin        int    `json:"is_admin,omitempty"`
 	// UserPercent *float64 `json:"user_percent,omitempty"`
 	DateCreated int `json:"date_created,omitempty"`
 

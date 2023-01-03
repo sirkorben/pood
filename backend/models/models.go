@@ -1,6 +1,8 @@
 package models
 
-import "errors"
+import (
+	"errors"
+)
 
 // maybe better place for it?
 var (
@@ -24,16 +26,16 @@ type UserRegistered struct {
 }
 
 type User struct {
-	Id             int    `json:"id,omitempty"`
-	FirstName      string `json:"firstname,omitempty"`
-	LastName       string `json:"lastname,omitempty"`
-	Email          string `json:"email,omitempty"`
-	Password       string `json:"password,omitempty"`
-	HashedPassword []byte `json:"-"`
-	Activated      *int   `json:"activated,omitempty"`
-	IsAdmin        int    `json:"is_admin,omitempty"`
-	// UserPercent *float64 `json:"user_percent,omitempty"`
-	DateCreated int `json:"date_created,omitempty"`
+	Id             int      `json:"id,omitempty"`
+	FirstName      string   `json:"firstname,omitempty"`
+	LastName       string   `json:"lastname,omitempty"`
+	Email          string   `json:"email,omitempty"`
+	Password       string   `json:"password,omitempty"`
+	HashedPassword []byte   `json:"-"`
+	IsAdmin        int      `json:"is_admin,omitempty"`
+	Activated      *int     `json:"activated,omitempty"`
+	UserPercent    *float64 `json:"user_percent"`
+	DateCreated    int      `json:"date_created,omitempty"`
 
 	// date of creation do we need ?
 }

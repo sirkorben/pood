@@ -65,6 +65,7 @@ func fillDbWithTablesAndAdmin() {
 		password BLOB not null,
 		is_admin INTEGER not null,
 		activated INTEGER not null,
+		user_percent REAL not null,
 		date_created INTEGER not null);
 
 	create table orders(
@@ -102,11 +103,11 @@ func fillDbWithTablesAndAdmin() {
 		return
 	}
 
-	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
-		1, "Daniil", "Batjkovich", adminEmail, adminPass, 1, 1)
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, user_percent, date_created) VALUES (?,?,?,?,?,?,?,?, strftime('%s','now'))",
+		1, "Daniil", "Batjkovich", adminEmail, adminPass, 1, 1, 1.0)
 	if err != nil {
 		// handle error
-		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
+		log.Println("error in _, err = DB.Exec(INSERT) 1\n ", err)
 		return
 	}
 
@@ -123,11 +124,11 @@ func fillDbWithTablesAndAdmin() {
 		// handle error
 		return
 	}
-	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
-		2, "Tolja", "Activnqj", "alfa@bravo.com", oneTwoThree, 0, 1)
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, user_percent, date_created) VALUES (?,?,?,?,?,?,?,?, strftime('%s','now'))",
+		2, "Tolja", "Activnqj", "alfa@bravo.com", oneTwoThree, 0, 1, 1.15)
 	if err != nil {
 		// handle error
-		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
+		log.Println("error in _, err = DB.Exec(INSERT) 2\n ", err)
 		return
 	}
 
@@ -138,19 +139,19 @@ func fillDbWithTablesAndAdmin() {
 		log.Println("sqlite.orders err \t", err)
 	}
 
-	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
-		3, "Artem", "Non-active", "tema@bravo.com", oneTwoThree, 0, 0)
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, user_percent, date_created) VALUES (?,?,?,?,?,?,?,?, strftime('%s','now'))",
+		3, "Artem", "Non-active", "tema@bravo.com", oneTwoThree, 0, 0, 1.25)
 	if err != nil {
 		// handle error
-		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
+		log.Println("error in _, err = DB.Exec(INSERT) 3\n ", err)
 		return
 	}
 
-	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
-		4, "Fedja", "PassiF", "fedos@bravo.com", oneTwoThree, 0, 0)
+	_, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, user_percent, date_created) VALUES (?,?,?,?,?,?,?,?, strftime('%s','now'))",
+		4, "Fedja", "PassiF", "fedos@bravo.com", oneTwoThree, 0, 0, 1.5)
 	if err != nil {
 		// handle error
-		log.Println("error in _, err = DB.Exec(INSERT)\n ", err)
+		log.Println("error in _, err = DB.Exec(INSERT) 4\n ", err)
 		return
 	}
 	log.Println("db created")

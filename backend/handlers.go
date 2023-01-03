@@ -149,10 +149,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if helpers.ValidateSearchByArticle(article) {
-			// TODO:
-			// increse the price by 40% - it will be choosen different discount taken from User info set by admin
-			// would be taken from here knowing whos is logged take his percent from field(TODO: add field to users)
-			percent := 1.4
+			userPercent := db.GetPercentByUserId(user.Id) // if error in db - default percent will be set
 			var prices models.ApiResponse
 			err = helpers.ApiCall(article.Article, &prices)
 			if err != nil {
@@ -162,7 +159,7 @@ func search(w http.ResponseWriter, r *http.Request) {
 			}
 
 			for _, obj := range prices.Prices {
-				models.ChangePrice(obj, percent)
+				models.ChangePrice(obj, userPercent)
 			}
 			helpers.WriteResponse(prices, w) // check for possible errors
 		} else {

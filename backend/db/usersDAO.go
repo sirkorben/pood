@@ -11,6 +11,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+const default_user_percent = 1.15
+
 func InsertUser(user models.UserRegistered) error {
 	firstName := user.FirstName
 	lastName := user.LastName
@@ -27,8 +29,8 @@ func InsertUser(user models.UserRegistered) error {
 		return models.ErrDuplicateEmail
 	}
 	// insert user to db
-	_, err = DB.Exec("INSERT INTO users (firstname, lastname, email, password, is_admin, activated, date_created) VALUES (?,?,?,?,?,?, strftime('%s','now'))",
-		firstName, lastName, email, hashedPassword, 0, 0)
+	_, err = DB.Exec("INSERT INTO users (firstname, lastname, email, password, is_admin, activated, user_percent, date_created) VALUES (?,?,?,?,?,?,?, strftime('%s','now'))",
+		firstName, lastName, email, hashedPassword, 0, 0, default_user_percent)
 	if err != nil {
 		log.Println("sqlite.InsertUser()", err)
 		return err
@@ -132,4 +134,14 @@ func ActivateUser(user models.User) error {
 		return err
 	}
 	return nil
+}
+
+func GetPercentByUserId(id int) float64 {
+	row := DB.QueryRow("SELECT user_percent FROM users WHERE id = ?", id)
+	u := &models.User{}
+	err := row.Scan(&u.UserPercent)
+	if err != nil {
+		return 1.15
+	}
+	return *u.UserPercent
 }

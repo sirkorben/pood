@@ -19,10 +19,9 @@ const Form = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log(process.env.REACT_APP_BACKEND_URL) // delete this
     const res = axios
       .post(
-        `${process.env.REACT_APP_BACKEND_URL}` + "/signin",
+        `${process.env.REACT_APP_BACKEND_URL}/signin`,
         JSON.stringify({
           email,
           password,

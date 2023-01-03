@@ -28,7 +28,7 @@ const Form = () => {
 
     const res = axios
       .post(
-        "http://localhost:8080/signup",
+        `${process.env.REACT_APP_BACKEND_URL}/signup`,
         JSON.stringify({
           firstname,
           lastname,

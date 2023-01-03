@@ -8,8 +8,6 @@ import (
 )
 
 func main() {
-	log.Println("hey")
-
 	// writing to file make it difficult to trouble shoot why conteiner wont go up
 	// LOG_FILE := "./app_logs"
 	// logFile, err := os.OpenFile(LOG_FILE, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
@@ -24,8 +22,7 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	// infoLog.SetOutput(logFile)
 
-	// problem with passing env variables to container
-	setENV() // for local dev
+	setENV() // create .env file inside a container with all needed variables
 
 	s := &http.Server{
 		Addr:     ":8080",

@@ -12,21 +12,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-const (
-	backend_ip               = "http://146.190.118.167" // for prod
-	backend_ip_localhost     = "http://localhost"       // for running locally inside docker
-	backend_ip_localhost3000 = "http://localhost:3000"  // for running locally
-)
-
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", backend_ip_localhost3000)
-	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
-	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Authorization, Accept")
-}
-
 func home(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -38,7 +24,6 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func signUp(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -68,7 +53,6 @@ func signUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func signIn(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -112,7 +96,6 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func signOut(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -140,7 +123,6 @@ func signOut(w http.ResponseWriter, r *http.Request) {
 }
 
 func search(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -191,7 +173,6 @@ func search(w http.ResponseWriter, r *http.Request) {
 
 // admin logic
 func admin(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -204,7 +185,6 @@ func admin(w http.ResponseWriter, r *http.Request) {
 }
 
 func adminApproveHandler(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -259,7 +239,6 @@ func adminOrdersHandler(w http.ResponseWriter, r *http.Request) {
 
 func userOrders(w http.ResponseWriter, r *http.Request) {
 	// show user confirmed orders
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -283,7 +262,6 @@ func userOrders(w http.ResponseWriter, r *http.Request) {
 
 func order(w http.ResponseWriter, r *http.Request) {
 	// show user confirmed order by query param /order?id=8d6a4012-98e9-4a38-82e3-c27f6fbbf419
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -311,7 +289,6 @@ func order(w http.ResponseWriter, r *http.Request) {
 }
 
 func shoppingCart(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -343,7 +320,6 @@ func shoppingCart(w http.ResponseWriter, r *http.Request) {
 }
 
 func addItemToCart(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -373,7 +349,6 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 
 	//	TODO: send information about confirmed order to client and admin emails
 
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -421,7 +396,6 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 }
 
 func removeCart(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -444,7 +418,6 @@ func removeCart(w http.ResponseWriter, r *http.Request) {
 }
 
 func removeItemFromCart(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -465,3 +438,20 @@ func removeItemFromCart(w http.ResponseWriter, r *http.Request) {
 		db.DeletePositionFromCart(shoppingCartPositionId.PositionId)
 	}
 }
+
+// delete code if not needed
+
+// const (
+// 	backend_ip               = "http://146.190.118.167" // for prod
+// 	backend_ip_localhost     = "http://localhost"       // for running locally inside docker
+// 	backend_ip_localhost3000 = "http://localhost:3000"  // for running locally
+// )
+
+// func enableCors(w *http.ResponseWriter) {
+// 	(*w).Header().Set("Access-Control-Allow-Origin", backend_ip_localhost3000)
+// 	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
+// 	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PATCH, DELETE")
+// 	(*w).Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Authorization, Accept")
+// }
+
+// enableCors(&w)

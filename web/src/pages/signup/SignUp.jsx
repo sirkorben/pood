@@ -4,6 +4,8 @@ import axios from "axios"
 import { Link } from "react-router-dom"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import { local_backend_ip } from "../../App"
+
 
 const SignUp = () => {
   return (
@@ -28,7 +30,7 @@ const Form = () => {
 
     const res = axios
       .post(
-        `${process.env.REACT_APP_BACKEND_URL}/signup`,
+        `${local_backend_ip}/signup`, // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
         JSON.stringify({
           firstname,
           lastname,

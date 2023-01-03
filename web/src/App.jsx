@@ -3,6 +3,8 @@ import "./App.css"
 import AllRoutes from "./components/Routes"
 import { Link } from "react-router-dom"
 
+export const local_backend_ip = "http://localhost:8080"
+
 function App() {
   return (
     <div>

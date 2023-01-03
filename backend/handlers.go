@@ -12,12 +12,14 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-const ip = "http://146.190.118.167:3000"
-
-// const localhost = "http://localhost:8080"
+const (
+	backend_ip               = "http://146.190.118.167" // for prod
+	backend_ip_localhost     = "http://localhost"       // for running locally inside docker
+	backend_ip_localhost3000 = "http://localhost:3000"  // for running locally
+)
 
 func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", ip)
+	(*w).Header().Set("Access-Control-Allow-Origin", backend_ip_localhost3000)
 	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
 	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	(*w).Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Authorization, Accept")

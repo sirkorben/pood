@@ -3,6 +3,7 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import { ToastContainer, toast } from "react-toastify"
 import "./SignIn.scss"
+import { local_backend_ip } from "../../App"
 
 const SignIn = () => {
   return (
@@ -21,7 +22,7 @@ const Form = () => {
     e.preventDefault()
     const res = axios
       .post(
-        `${process.env.REACT_APP_BACKEND_URL}/signin`,
+        `${local_backend_ip}/signin`,  // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
         JSON.stringify({
           email,
           password,

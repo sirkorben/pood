@@ -34,10 +34,8 @@ type User struct {
 	HashedPassword []byte   `json:"-"`
 	IsAdmin        int      `json:"is_admin,omitempty"`
 	Activated      *int     `json:"activated,omitempty"`
-	UserPercent    *float64 `json:"user_percent"`
-	DateCreated    int      `json:"date_created,omitempty"`
-
-	// date of creation do we need ?
+	UserPercent    *float64 `json:"user_percent,omitempty"`
+	DateCreated    int      `json:"date_created,omitempty"` // date of creation do we need ?
 }
 
 type Session struct {

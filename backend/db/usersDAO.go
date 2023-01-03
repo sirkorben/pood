@@ -69,17 +69,17 @@ func Authenticate(credName, password string) (int, error) {
 		}
 	}
 
-	activated, err := activated(id)
+	isActivated, err := isActivated(id)
 	if err != nil {
 		return 0, err
 	}
-	if activated != 1 {
+	if isActivated != 1 {
 		return 0, models.ErrUserNotActivated
 	}
 	return id, nil
 }
 
-func activated(id int) (int, error) {
+func isActivated(id int) (int, error) {
 	var activated int
 	row := DB.QueryRow("SELECT activated FROM users WHERE id = ?", id)
 	err := row.Scan(&activated)
@@ -127,8 +127,28 @@ func GetNonActivatedUsers() ([]*models.User, error) {
 	return users, nil
 }
 
-func ActivateUser(user models.User) error {
-	_, err := DB.Exec("UPDATE users SET activated = 1 WHERE id = ?;", user.Id)
+func GetActivatedUsers() ([]*models.User, error) {
+	var users []*models.User
+
+	rows, err := DB.Query("SELECT id, firstname, lastname, email, activated, date_created, user_percent FROM users WHERE activated = 1 ORDER BY date_created DESC")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		user := &models.User{}
+		err = rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.Activated, &user.DateCreated, &user.UserPercent)
+		if err != nil {
+
+			return nil, err
+		}
+		users = append(users, user)
+	}
+	return users, nil
+}
+
+func ActivateUser(id int) error {
+	_, err := DB.Exec("UPDATE users SET activated = 1 WHERE id = ?;", id)
 	if err != nil {
 		fmt.Println("4	", err)
 		return err
@@ -144,4 +164,13 @@ func GetPercentByUserId(id int) float64 {
 		return 1.15
 	}
 	return *u.UserPercent
+}
+
+func ManageUserPercent(id int, percent float64) error {
+	_, err := DB.Exec("UPDATE users SET user_percent = ? WHERE id = ?;", percent, id)
+	if err != nil {
+		fmt.Println("5	", err)
+		return err
+	}
+	return nil
 }

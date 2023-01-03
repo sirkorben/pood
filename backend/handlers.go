@@ -56,7 +56,6 @@ func signIn(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
-	log.Println("somebody signed in after cors check")
 	if r.Method == http.MethodPost {
 		var u models.User
 		err := helpers.DecodeJSONBody(w, r, &u)
@@ -221,7 +220,57 @@ func adminApproveHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
-		err = db.ActivateUser(userToActivate)
+
+		err = db.ActivateUser(userToActivate.Id)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		}
+	} else {
+		helpers.ErrorResponse(w, helpers.MethodNotAllowedErrorMsg, http.StatusMethodNotAllowed)
+	}
+}
+
+func adminIncreasePriceHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	_, err := db.CheckAdminSession(r)
+	if err != nil {
+		helpers.ErrorHandler(err, w)
+		return
+	}
+	if r.Method == http.MethodGet {
+		activatedUsersList, err := db.GetActivatedUsers()
+		if err != nil {
+			if errors.Is(err, models.ErrNoRecord) {
+				// handle error
+				log.Println("adminIncreasePriceForActivatedUsers -> MethodGet -> nonActivatedUserList, err := ")
+				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+				return
+			}
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			return
+		}
+		err = helpers.WriteResponse(activatedUsersList, w)
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		}
+
+	} else if r.Method == http.MethodPatch {
+		var userToIncreasePercent models.User
+		err := helpers.DecodeJSONBody(w, r, &userToIncreasePercent)
+		if err != nil {
+			var errMsg *helpers.ErrorMsg
+			if errors.As(err, &errMsg) {
+				helpers.ErrorResponse(w, *errMsg, http.StatusBadRequest)
+			} else {
+				log.Println("helpers.DecodeJSONBody(w, r, &u)", err)
+				helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+			}
+			return
+		}
+		err = db.ManageUserPercent(userToIncreasePercent.Id, *userToIncreasePercent.UserPercent)
 		if err != nil {
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 		}

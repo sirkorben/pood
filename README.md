@@ -10,7 +10,7 @@ simply `yarn install and npm start` from web repository
 
 ## Running locally inside docker containers
 
-To allow Go server accepting requests from our React(that will run from container on different port) make changes in `handlers.go`
+To allow Go server accepting requests from our React(that will run from container on different port) make changes in `/helpers/cors.go`
 
 To make React app(running from one container) call right backend IP (running from another container) change uri link to
 `` const res = axios.post(`${process.env.REACT_APP_BACKEND_URL}/signup` // where it is needed ``

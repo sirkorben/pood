@@ -23,6 +23,33 @@ func home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func me(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	s, err := db.CheckSession(r)
+	if err != nil {
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+		return
+	}
+
+	var u *models.User
+	u, err = db.GetUserProfile(s.User.Id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			helpers.ErrorResponse(w, helpers.BadRequestErrorMsg, http.StatusBadRequest)
+		} else {
+			helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+
+		}
+		log.Println(err.Error())
+		return
+	}
+	helpers.WriteResponse(u, w) // check for possible errors
+
+}
+
 func signUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return

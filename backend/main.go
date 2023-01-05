@@ -33,7 +33,6 @@ func main() {
 
 func routes() *http.ServeMux {
 	sm := http.NewServeMux()
-	sm.HandleFunc("/", helpers.HandleCors(home))                                         // GET
 	sm.HandleFunc("/me", helpers.HandleCors(me))                                         //GET
 	sm.HandleFunc("/signup", helpers.HandleCors(signUp))                                 // POST
 	sm.HandleFunc("/signin", helpers.HandleCors(signIn))                                 // POST

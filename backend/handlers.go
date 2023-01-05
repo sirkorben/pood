@@ -12,42 +12,31 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodOptions {
-		return
-	}
-
-	if r.URL.Path != "/" {
-		helpers.ErrorResponse(w, helpers.NotFoundErrorMsg, http.StatusNotFound)
-		return
-	}
-}
-
 func me(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodOptions {
 		return
 	}
-
-	s, err := db.CheckSession(r)
-	if err != nil {
-		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
-		return
-	}
-
-	var u *models.User
-	u, err = db.GetUserProfile(s.User.Id)
-	if err != nil {
-		if errors.Is(err, models.ErrNoRecord) {
-			helpers.ErrorResponse(w, helpers.BadRequestErrorMsg, http.StatusBadRequest)
-		} else {
+	if r.Method == http.MethodGet {
+		s, err := db.CheckSession(r)
+		if err != nil {
 			helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
-
+			return
 		}
-		log.Println(err.Error())
-		return
-	}
-	helpers.WriteResponse(u, w) // check for possible errors
 
+		var u *models.User
+		u, err = db.GetUserProfile(s.User.Id)
+		if err != nil {
+			if errors.Is(err, models.ErrNoRecord) {
+				helpers.ErrorResponse(w, helpers.BadRequestErrorMsg, http.StatusBadRequest)
+			} else {
+				helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+
+			}
+			log.Println(err.Error())
+			return
+		}
+		helpers.WriteResponse(u, w) // check for possible errors
+	}
 }
 
 func signUp(w http.ResponseWriter, r *http.Request) {

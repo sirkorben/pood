@@ -1,5 +1,5 @@
 import axios from "axios"
-import { createContext, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { local_backend_ip } from "../../App"
 export const SearchContext = createContext()
@@ -9,6 +9,7 @@ export const SearchContext = createContext()
 const APP_LINK = "https://originalparts.pro/api/search?" */
 const SearchContextProvider = (props) => {
   const [results, setResults] = useState([])
+
   const SearchRequest = (article) => {
     const response = axios
       .post(

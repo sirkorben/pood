@@ -5,9 +5,6 @@ import Products from "../components/products/Products"
 
 const Main = () => {
   /*  const [results, setResults] = useState */
-  const SearchRequest = async () => {
-    await axios.get()
-  }
 
   return (
     <div>

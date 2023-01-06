@@ -5,7 +5,7 @@ import { useContext } from "react"
 import { UserContext } from "../utils/UserContext"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
-
+import { local_backend_ip } from "../../App"
 const Header = () => {
   const { logged } = useContext(UserContext)
   return (
@@ -42,7 +42,7 @@ const SignOutButton = () => {
   const { setLogged } = useContext(UserContext)
   const handleClick = () => {
     axios
-      .get("http://localhost:8080/signout", { withCredentials: true })
+      .get(`${local_backend_ip}/signout`, { withCredentials: true })
       .then(() => {
         setLogged(false)
         nav("/")

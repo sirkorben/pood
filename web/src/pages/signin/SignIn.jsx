@@ -1,28 +1,32 @@
 import axios from "axios"
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { ToastContainer, toast } from "react-toastify"
 import "./SignIn.scss"
 import { local_backend_ip } from "../../App"
+import { useContext } from "react"
+import { UserContext } from "../../components/utils/UserContext"
 
 const SignIn = () => {
   return (
     <div>
-      <Form />
+      <SignInForm />
       <ToastContainer />
     </div>
   )
 }
 
-const Form = () => {
+export const SignInForm = () => {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
+  const { logged, setLogged } = useContext(UserContext)
+  console.log(logged)
+  const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault()
     const res = axios
       .post(
-        `${local_backend_ip}/signin`,  // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
+        `${local_backend_ip}/signin`, // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
         JSON.stringify({
           email,
           password,
@@ -32,7 +36,12 @@ const Form = () => {
           withCredentials: true,
         }
       )
+      .then(() => {
+        navigate("/search")
+        setLogged(true)
+      })
       .catch((error) => {
+        setLogged(false)
         toast.error(error.response["data"]["error_description"], {
           position: "top-right",
           autoClose: 5000,

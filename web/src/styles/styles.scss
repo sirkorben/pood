@@ -1,0 +1,22 @@
+@import "./variables.scss";
+*,
+*::before,
+*::after {
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: $montserrat-font;
+  color: $text;
+}
+button {
+  font-family: inherit;
+  outline: none;
+  border: none;
+  background: none;
+  letter-spacing: inherit;
+  color: inherit;
+  font-size: inherit;
+  text-align: inherit;
+  padding: 0;
+}

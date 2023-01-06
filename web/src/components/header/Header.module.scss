@@ -1,0 +1,100 @@
+@import "../../styles/variables.scss";
+
+.header {
+  height: 72px;
+  background-color: $primary;
+  color: $text2;
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+
+  &__content {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+    @include breakpoint(md) {
+      padding: 0 $spacing-lg;
+    }
+    height: 100%;
+    display: flex;
+    align-items: center;
+    & > div {
+      flex: 1;
+      white-space: nowrap;
+
+      &:nth-child(3) {
+        display: flex;
+        justify-content: center;
+        height: 100%;
+      }
+      &:last-of-type {
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+    &__button__container {
+      display: none;
+      @include breakpoint(md) {
+        display: initial;
+      }
+    }
+  }
+}
+.logo {
+  font-size: 26px;
+  font-weight: 700;
+  color: $text2;
+}
+
+.nav {
+  width: 100%;
+  position: fixed;
+  top: 72px;
+  // right: -100%;
+  text-align: center;
+  padding: $spacing-md 0;
+
+  &__item {
+    display: block;
+    padding: $spacing-md;
+    text-decoration: none;
+    color: inherit;
+    height: 100%;
+  }
+  @include breakpoint(md) {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    background: initial;
+    width: auto;
+    padding: 0;
+    &__item {
+      padding: 0 $spacing-lg;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  &__button__container {
+    @include breakpoint(md) {
+      display: none;
+    }
+    padding: $spacing-md;
+  }
+}
+.button {
+  font-weight: 500;
+  color: $primary;
+  border: 2px solid $primary;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $spacing-sm/2;
+  cursor: pointer;
+  box-shadow: 0 0 0.5em 0 $primary;
+  &:active {
+    transform: scale(0.98);
+    border-radius: 0;
+  }
+  &:hover {
+    box-shadow: 0 0 0.75em 0 $primary;
+  }
+}

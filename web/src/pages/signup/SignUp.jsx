@@ -6,7 +6,6 @@ import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { local_backend_ip } from "../../App"
 
-
 const SignUp = () => {
   return (
     <div>
@@ -99,7 +98,7 @@ const Form = () => {
               <button>Sign Up</button>
             </form>
             <p>
-              Already have an account? <Link to={"/signin"}>Login</Link>
+              Already have an account? <Link to={"/signin"}>Sign In</Link>
             </p>
           </div>
         )}
@@ -111,7 +110,7 @@ const Form = () => {
 const ApproveMessage = () => {
   return (
     <div className="approve">
-      <p>Ваша заявка будет рассмотрена администратором сайта</p>
+      <p>Your application will be reviewed by the site administrator</p>
     </div>
   )
 }

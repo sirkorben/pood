@@ -1,10 +1,9 @@
-/* :root {
+:root {
   --maincolor: linear-gradient(to right, #305ab3, #d7a7f0);
   --secondarycolor: rgb(85, 116, 219);
 }
 
 .formContainer {
-  
   height: 100vh;
   display: flex;
   align-items: center;
@@ -63,6 +62,10 @@
     color: rgb(112, 125, 146);
     font-size: 12px;
     margin-top: 10px;
+    span {
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
 }
- */

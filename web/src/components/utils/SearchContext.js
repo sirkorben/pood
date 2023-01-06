@@ -1,5 +1,4 @@
 import axios from "axios"
-import { validate } from "graphql"
 import { createContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { local_backend_ip } from "../../App"

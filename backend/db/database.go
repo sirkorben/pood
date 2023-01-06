@@ -132,6 +132,14 @@ func fillDbWithTablesAndAdmin() {
 		return
 	}
 
+	// _, err = DB.Exec("INSERT INTO users (id, firstname, lastname, email, password, is_admin, activated, user_percent, date_created) VALUES (?,?,?,?,?,?,?,?, strftime('%s','now'))",
+	// 	47, "Tolja", "Activnqj", "admin@bravo.com", oneTwoThree, 1, 1, 1.0)
+	// if err != nil {
+	// 	// handle error
+	// 	log.Println("error in _, err = DB.Exec(INSERT) 2\n ", err)
+	// 	return
+	// }
+
 	orderId := uuid.NewV4()
 	_, err = DB.Exec("INSERT INTO orders (id, user_id, confirmed, date_created) VALUES (?,(SELECT id FROM users WHERE email = ?),?,strftime('%s','now'))",
 		orderId, "alfa@bravo.com", 0)

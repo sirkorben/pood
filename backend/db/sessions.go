@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"errors"
 	"log"
 	"net/http"
@@ -78,9 +79,18 @@ func CheckAdminSession(r *http.Request) (*models.Session, error) {
 	}
 
 	//check if session belongs to the Admin
-	if session.User.Id != 1 {
+	user := &models.User{}
+	row = DB.QueryRow("SELECT is_admin FROM users WHERE id = ?", session.User.Id)
+	err = row.Scan(&user.IsAdmin)
+
+	if err != nil || user.IsAdmin != 1 {
+		if errors.Is(err, sql.ErrNoRows) {
+			log.Printf("SELECT is_admin err - %v", err)
+			return nil, models.ErrUnauthorized
+		}
 		return nil, models.ErrUnauthorized
 	}
+
 	t := time.Unix(int64(createdDate), 0) // time.Time
 	if t.AddDate(0, 0, 1).Before(time.Now()) {
 		err := DeleteSession(session.Id)

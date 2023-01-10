@@ -109,7 +109,11 @@ export const AdminManagePercent = () => {
       )
       .catch((err) => {
         console.log(err)
-      })
+      });
+      Array.from(document.querySelectorAll("input")).forEach(
+        input => (input.value = "")
+      );
+      setPercent(1.15)
   }
 
   return (
@@ -120,19 +124,20 @@ export const AdminManagePercent = () => {
           users?.map((user) => (
             <div key={user.id} className={styles.users__card}>
               <div>
-                <label>Name: {user.firstname}</label>
+                <label>{`${user.firstname} ${user.lastname}`}</label>
               </div>
               <div>
-                <label>Email: {user.email}</label>
+                <label>{user.email}</label>
               </div>
-              <div>
+              {/* <div>
                 <label>ID: {user.id}</label>
-              </div>
+              </div> */}
               <div>
                 <label>Percent: {user.user_percent}</label>
               </div>
               <div>
                 <input
+                  required
                   type="text"
                   placeholder="set percent"
                   onChange={(e) => setPercent(e.target.value)}

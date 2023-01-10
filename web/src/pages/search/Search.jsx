@@ -22,7 +22,6 @@ const Input = () => {
   const handleClick = async (e) => {
     e.preventDefault()
     SearchRequest(article)
-    nav("/products")
   }
 
   return (

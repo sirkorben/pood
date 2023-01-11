@@ -26,6 +26,7 @@ const SearchContextProvider = (props) => {
         //console.log(res)
         setResults(res.data)
       })
+
     console.log(response)
   }
 

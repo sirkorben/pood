@@ -8,10 +8,10 @@ const Main = () => {
 
   return (
     <div>
-      <Header />
-      <div>
+      {/* <Header /> */}
+      {/* <div>
         <Products />
-      </div>
+      </div> */}
     </div>
   )
 }

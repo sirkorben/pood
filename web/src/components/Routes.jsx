@@ -1,9 +1,11 @@
 import React from "react"
 import { Routes, Route } from "react-router-dom"
-
 import Home from "../pages/home/Home"
 import AdminPage from "../pages/admin/Admin"
 import { AdminApprove, AdminManagePercent } from "../pages/admin/Admin"
+import Me from "../pages/me/Me"
+import SearchPage from "../pages/search/Search"
+import Cart from "../pages/cart/Cart"
 
 import Products from "./products/Products"
 
@@ -15,6 +17,9 @@ const AllRoutes = () => {
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/admin/approve" element={<AdminApprove />} />
           <Route path="/admin/managepercent" element={<AdminManagePercent />} />
+          <Route path="/me" element={<Me />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/cart" element={<Cart />} />
           {/*  <Route path="signin" element={<SignIn />} />
           <Route path="signup" element={<SignUp />} /> */}
           {/* <Route path="products" element={<Products />} /> */}

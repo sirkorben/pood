@@ -3,10 +3,12 @@ import styles from "./Header.module.scss"
 import SearchBar from "../../pages/search/Search"
 import { useContext } from "react"
 import { UserContext } from "../utils/UserContext"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import axios from "axios"
 import { local_backend_ip } from "../../App"
-const Header = () => {
+import { SearchContext } from "../utils/SearchContext"
+import { CartContext } from "../utils/CartContext"
+/* const Header = () => {
   const { logged } = useContext(UserContext)
   return (
     <div className={styles.header}>
@@ -24,9 +26,7 @@ const Header = () => {
               <div className={styles.nav__item}>
                 <SearchBar />
               </div>
-              {/*   <div className={styles.nav__button__container}>
-                <SignOutButton />
-              </div> */}
+           
             </nav>
           </div>
           <div>
@@ -38,21 +38,64 @@ const Header = () => {
       )}
     </div>
   )
+} */
+
+const Header = () => {
+  const { logged } = useContext(UserContext)
+  const { itemsInCart } = useContext(CartContext)
+  return (
+    <div className={styles.header_wrapper}>
+      {logged === false ? null : (
+        <div>
+          <h1 className={styles.title}>PartsHub</h1>
+          <nav className={styles.nav}>
+            <ul className={styles.nav__items}>
+              <li>
+                <Link className={styles.nav__link} to="/cart">
+                  Cart
+                </Link>
+                {itemsInCart ? (
+                  <div className={styles.quantity}>{itemsInCart}</div>
+                ) : null}
+              </li>
+              <li>
+                <Link className={styles.nav__link} to="/search">
+                  Search
+                </Link>
+              </li>
+              <li>
+                <Link className={styles.nav__link}>My orders</Link>
+              </li>
+              <li>
+                <Link className={styles.nav__link} to="/me">
+                  Me
+                </Link>
+              </li>
+            </ul>
+          </nav>
+          <SignOutButton />
+        </div>
+      )}
+    </div>
+  )
 }
 
 const SignOutButton = () => {
   const nav = useNavigate()
   const { setLogged } = useContext(UserContext)
+  const { setResults } = useContext(SearchContext)
+
   const handleClick = () => {
     axios
       .get(`${local_backend_ip}/signout`, { withCredentials: true })
       .then(() => {
         setLogged(false)
+        setResults([])
         nav("/")
       })
   }
   return (
-    <div>
+    <div className={styles.button}>
       <button onClick={handleClick}>Sign Out</button>
     </div>
   )

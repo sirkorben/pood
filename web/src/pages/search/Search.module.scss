@@ -1,0 +1,32 @@
+@import "../../styles/variables.scss";
+
+.search_wrapper {
+  text-align: center;
+  /* margin-bottom: 20px; */
+
+  .search {
+    input {
+      width: 500px;
+      height: 30px;
+      font-size: 20px;
+      outline: none;
+      border: none;
+      border-bottom: 1px solid grey;
+      margin-right: 20px;
+      margin-bottom: 50px;
+    }
+    button {
+      color: $text2;
+      font-size: 20px;
+      width: 100px;
+      height: 30px;
+      /* border: 1px solid black; */
+      &:hover {
+        background-color: $primary;
+        color: $text;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+    }
+  }
+}

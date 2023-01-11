@@ -7,12 +7,14 @@ export const UserContext = createContext()
 export const UserContextProvider = (props) => {
   const [logged, setLogged] = useState(false)
   const [isSignUp, setIsSignUp] = useState(false)
+  const [me, setMe] = useState({})
 
   // console.log(logged)
   useEffect(() => {
     axios
       .get(`${local_backend_ip}/me`, { withCredentials: true })
       .then((res) => {
+        setMe(res.data)
         setLogged(true)
       })
       .catch((err) => {
@@ -21,7 +23,7 @@ export const UserContextProvider = (props) => {
       })
   }, [logged])
 
-  const value = { logged, setLogged, isSignUp, setIsSignUp }
+  const value = { logged, setLogged, isSignUp, setIsSignUp, me }
 
   return (
     <UserContext.Provider value={value}>{props.children}</UserContext.Provider>

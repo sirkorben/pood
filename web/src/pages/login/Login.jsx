@@ -4,13 +4,14 @@ import { useNavigate, Link } from "react-router-dom"
 import { UserContext } from "../../components/utils/UserContext"
 import axios from "axios"
 import { local_backend_ip } from "../../App"
-import { toast } from "react-toastify"
+import { ToastContainer, toast } from "react-toastify"
 import "./Login.scss"
 
 const Login = () => {
   return (
     <div>
       <Forms />
+      <ToastContainer />
     </div>
   )
 }
@@ -44,7 +45,7 @@ const SignInForm = () => {
         }
       )
       .then(() => {
-        navigate("/search")
+        navigate("/me")
         setLogged(true)
       })
       .catch((error) => {

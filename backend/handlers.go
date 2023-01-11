@@ -445,13 +445,13 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		err = helpers.SendEmail(order)
+		/* err = helpers.SendEmail(order)
 		if err != nil {
 			log.Println("helpers.SendEmail err -> ", err)
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			return
 		}
-		log.Println("email sent")
+		log.Println("email sent") */
 		helpers.InfoResponse(w, helpers.OrderConfirmedInfoMsg, http.StatusCreated)
 
 	}

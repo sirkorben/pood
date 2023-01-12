@@ -318,6 +318,33 @@ func adminOrdersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func adminOrderHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	_, err := db.CheckAdminSession(r)
+	if err != nil {
+		helpers.ErrorHandler(err, w)
+		return
+	}
+
+	orderId := r.URL.Query().Get("id") // handle execptions
+	var order models.UserOrder
+	order.Positions, err = db.GetOrderedProductsByConfirmedOrderId(orderId)
+	if err != nil {
+		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		return
+	}
+	dateCreated, err := db.GetOrderDateCreated(orderId)
+	models.CollectUserOrder(&order, orderId, dateCreated)
+	if err != nil {
+		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		return
+	}
+	helpers.WriteResponse(order, w)
+}
+
 // show confirmed orders for user
 func userOrders(w http.ResponseWriter, r *http.Request) {
 
@@ -361,7 +388,7 @@ func order(w http.ResponseWriter, r *http.Request) {
 		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 		return
 	}
-	dateCreated, err := db.GetOrderDateCreated(s.User.Id, orderId)
+	dateCreated, err := db.GetOrderDateCreated(orderId)
 	models.CollectUserOrder(&order, orderId, dateCreated)
 	if err != nil {
 		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
@@ -458,7 +485,7 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			return
 		}
-		dateCreated, err := db.GetOrderDateCreated(s.User.Id, orderId)
+		dateCreated, err := db.GetOrderDateCreated(orderId)
 		models.CollectUserOrder(&order, orderId, dateCreated)
 		if err != nil {
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)

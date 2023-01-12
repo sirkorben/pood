@@ -197,9 +197,25 @@ func GetConfirmedUserOrder(orderId string) (models.UserOrder, error) {
 	return order, nil
 }
 
-func GetOrderDateCreated(userId int, orderId string) (int, error) {
+// func GetOrderDateCreated(userId int, orderId string) (int, error) {
+// 	var dateCreated int
+// 	row := DB.QueryRow("SELECT date_created FROM orders WHERE id = ? AND user_id = ?", orderId, userId)
+// 	err := row.Scan(&dateCreated)
+// 	if err != nil {
+// 		if errors.Is(err, sql.ErrNoRows) {
+// 			log.Println("GetNonConfirmedOrderId err 1 ->", err)
+// 			return 0, err
+// 		} else {
+// 			log.Println("GetNonConfirmedOrderId err 2 ->", err)
+// 			return 0, err
+// 		}
+// 	}
+// 	return dateCreated, nil
+// }
+
+func GetOrderDateCreated(orderId string) (int, error) {
 	var dateCreated int
-	row := DB.QueryRow("SELECT date_created FROM orders WHERE id = ? AND user_id = ?", orderId, userId)
+	row := DB.QueryRow("SELECT date_created FROM orders WHERE id = ?", orderId)
 	err := row.Scan(&dateCreated)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

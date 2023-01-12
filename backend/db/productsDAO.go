@@ -49,7 +49,28 @@ func GetProductsUnderNonConfirmedOrderId(userId int, orderId string) ([]*models.
 	return products, nil
 }
 
-func GetOrderedProductsByConfirmedOrderId(orderId string) []models.Product {
+func GetOrderedProductsByConfirmedOrderId(orderId string) ([]*models.Product, error) {
+	rows, err := DB.Query("SELECT * FROM positions_ordered WHERE order_id = ? ORDER BY product_quantity_price DESC", orderId)
+	if err != nil {
+		fmt.Println("3\t", err)
+		return nil, err
+	}
+	defer rows.Close()
 
-	return nil
+	var products []*models.Product
+	for rows.Next() {
+		product := &models.Product{}
+		err = rows.Scan(&product.PositionId, &orderId, &product.Price, &product.Article, &product.Supplier, &product.SupplierPriceNum, &product.Brand, &product.Currency, &product.CurrencyRate, &product.Delivery,
+			&product.Weight, &product.Quantity, &product.ProductQuantityPrice)
+		if err != nil {
+			fmt.Println("4\t", err)
+			return nil, err
+		}
+		products = append(products, product)
+	}
+	if err != nil {
+		fmt.Println("t5\t", err)
+		return nil, err
+	}
+	return products, nil
 }

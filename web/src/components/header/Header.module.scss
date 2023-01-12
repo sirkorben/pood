@@ -39,14 +39,26 @@
       li {
         display: inline;
         margin-right: 80px;
+
         &:last-child {
           margin-right: 0;
         }
+
+        /* &:hover {
+          background-color: $primary;
+        } */
       }
     }
     &__link {
       text-decoration: none;
       font-size: 18px;
+      /* width: 50px; */
+      &:hover {
+        background-color: $primary;
+        color: $text;
+        border-radius: 5px;
+        /* width: 50px; */
+      }
     }
   }
 

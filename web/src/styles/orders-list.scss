@@ -1,5 +1,4 @@
-@import "../../styles/variables.scss";
-
+@import "./variables.scss";
 .orders_wrapper {
   color: $text2;
   .orders_card {
@@ -7,7 +6,7 @@
       margin-bottom: 20px;
     }
 
-    /* .orders_list {
+    /*  .orders_list {
       ul {
         list-style-type: square;
 
@@ -48,6 +47,19 @@
           }
         }
       }
+    }
+
+    .user_information {
+      /*  border: 1px solid black; */
+      margin-bottom: 20px;
+      ul {
+        list-style-type: square;
+        padding-left: 20px;
+      }
+    }
+
+    .total_order_price {
+      font-weight: 700;
     }
   }
 }

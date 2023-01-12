@@ -196,7 +196,7 @@ const SignUpForm = () => {
 const ApproveMessage = () => {
   return (
     <div className="approve">
-      <p>Your application will be reviewed by the site administrator</p>
+      <p>Your application will be reviewed by the site administrator.</p>
     </div>
   )
 }

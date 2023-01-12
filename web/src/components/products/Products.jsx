@@ -118,7 +118,9 @@ const Products = () => {
               <li>Currency: {result.currency}</li>
               <li>Currency rate: {result.currency_rate}</li>
               <li>Delivery: {result.delivery}</li>
-              {result.weight ? <li>Weight: {result.weight}</li> : null}
+              {result.weight ? (
+                <li>Weight: {result.weight?.toFixed(2)} kg</li>
+              ) : null}
               {result.name ? <li>Name: {result.name}</li> : null}
             </ul>
           </div>

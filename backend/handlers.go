@@ -337,11 +337,16 @@ func adminOrderHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	dateCreated, err := db.GetOrderDateCreated(orderId)
-	models.CollectUserOrder(&order, orderId, dateCreated)
 	if err != nil {
 		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 		return
 	}
+	user, err := db.GetUserByOrderId(orderId)
+	if err != nil {
+		helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
+		return
+	}
+	models.CollectUserOrderForAdmin(&order, user, orderId, dateCreated)
 	helpers.WriteResponse(order, w)
 }
 

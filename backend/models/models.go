@@ -115,14 +115,24 @@ type UserOrders struct {
 // POST /order
 type UserOrder struct {
 	OrderId     string     `json:"order_id"`
+	User        *User      `json:"user,omitempty"`
 	DateCreated int        `json:"date_created"`
-	TotalPrice  float64    `json:"total_price,omitempty"` // newly added
+	TotalPrice  float64    `json:"total_price,omitempty"`
 	Positions   []*Product `json:"positions,omitempty"`
 }
 
 func CollectUserOrder(order *UserOrder, orderId string, dateCreated int) {
 	order.OrderId = orderId
 	order.DateCreated = dateCreated
+	for _, prod := range order.Positions { // newly added
+		order.TotalPrice += prod.ProductQuantityPrice
+	}
+}
+
+func CollectUserOrderForAdmin(order *UserOrder, user *User, orderId string, dateCreated int) {
+	order.OrderId = orderId
+	order.DateCreated = dateCreated
+	order.User = user
 	for _, prod := range order.Positions { // newly added
 		order.TotalPrice += prod.ProductQuantityPrice
 	}

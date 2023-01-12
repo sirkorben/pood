@@ -189,3 +189,19 @@ func GetUserProfile(id int) (*models.User, error) {
 	}
 	return u, nil
 }
+
+func GetUserByOrderId(orderId string) (*models.User, error) {
+	row := DB.QueryRow("select firstname, lastname, email from users where id = (select user_id from orders where id = ?)", orderId)
+	u := &models.User{}
+	err := row.Scan(&u.FirstName, &u.LastName, &u.Email)
+	fmt.Println(u)
+	if err != nil {
+		log.Println(err)
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, models.ErrNoRecord
+		} else {
+			return nil, err
+		}
+	}
+	return u, nil
+}

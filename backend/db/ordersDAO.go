@@ -190,7 +190,7 @@ func DeletePositionFromCart(positionId string) error {
 // 	return userOrders, nil
 // }
 
-func GetConfirmedUserOrders2(userId int) ([]*models.UserOrder, error) {
+func GetConfirmedUserOrders(userId int) ([]*models.UserOrder, error) {
 	rows, err := DB.Query("select id, date_created from orders WHERE confirmed = 1 and user_id = ? ORDER BY date_created desc", userId)
 	if err != nil {
 		// handle error
@@ -219,6 +219,34 @@ func GetConfirmedUserOrders2(userId int) ([]*models.UserOrder, error) {
 	return userOrders, nil
 }
 
+func GetConfirmedAllUserOrders() ([]*models.UserOrder, error) {
+	rows, err := DB.Query("select id, date_created from orders WHERE confirmed = 1 ORDER BY date_created desc")
+	if err != nil {
+		// handle error
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	// var userOrders []string
+	var userOrders []*models.UserOrder
+	for rows.Next() {
+		order := &models.UserOrder{}
+		err = rows.Scan(&order.OrderId, &order.DateCreated)
+		if err != nil {
+			// handle err
+			// return nil, err
+			log.Println(err)
+			return nil, err
+		}
+		userOrders = append(userOrders, order)
+	}
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return userOrders, nil
+}
 func GetConfirmedUserOrder(orderId string) (models.UserOrder, error) {
 	var order models.UserOrder
 

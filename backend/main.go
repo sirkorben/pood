@@ -43,7 +43,7 @@ func routes() *http.ServeMux {
 	sm.HandleFunc("/admin/managepercent", helpers.HandleCors(adminIncreasePriceHandler)) // GET, PATCH
 	sm.HandleFunc("/admin/orders", helpers.HandleCors(adminOrdersHandler))               // GET, PATCH (not implemented)
 	sm.HandleFunc("/myorders", helpers.HandleCors(userOrders))                           // GET
-	sm.HandleFunc("/order", helpers.HandleCors(order))                                   // GET by query parameter
+	sm.HandleFunc("/myorders/order", helpers.HandleCors(order))                          // GET by query parameter
 	sm.HandleFunc("/cart", helpers.HandleCors(shoppingCart))                             // GET, POST
 	sm.HandleFunc("/cart/add", helpers.HandleCors(addItemToCart))                        // POST
 	sm.HandleFunc("/cart/confirm", helpers.HandleCors(confirmCart))                      // POST

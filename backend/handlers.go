@@ -297,6 +297,25 @@ func adminIncreasePriceHandler(w http.ResponseWriter, r *http.Request) {
 
 func adminOrdersHandler(w http.ResponseWriter, r *http.Request) {
 	// show all users' orders
+	if r.Method == http.MethodOptions {
+		return
+	}
+
+	_, err := db.CheckAdminSession(r)
+	if err != nil {
+		helpers.ErrorHandler(err, w)
+		return
+	}
+
+	if r.Method == http.MethodGet {
+		var userOrders models.UserOrders
+		userOrders.Orders, err = db.GetConfirmedAllUserOrders()
+		if err != nil {
+			helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+			return
+		}
+		helpers.WriteResponse(userOrders, w)
+	}
 }
 
 func userOrders(w http.ResponseWriter, r *http.Request) {
@@ -313,7 +332,7 @@ func userOrders(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		var userOrders models.UserOrders
-		userOrders.Orders, err = db.GetConfirmedUserOrders2(s.User.Id)
+		userOrders.Orders, err = db.GetConfirmedUserOrders(s.User.Id)
 		if err != nil {
 			helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
 			return

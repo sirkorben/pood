@@ -191,7 +191,7 @@ func DeletePositionFromCart(positionId string) error {
 // }
 
 func GetConfirmedUserOrders2(userId int) ([]*models.UserOrder, error) {
-	rows, err := DB.Query("select id, date_created from orders WHERE confirmed = 1 ORDER BY date_created desc")
+	rows, err := DB.Query("select id, date_created from orders WHERE confirmed = 1 and user_id = ? ORDER BY date_created desc", userId)
 	if err != nil {
 		// handle error
 		log.Println(err)

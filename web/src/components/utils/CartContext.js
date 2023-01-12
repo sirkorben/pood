@@ -16,7 +16,7 @@ export const CartContextProvider = (props) => {
   //console.log(added)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/cart`, { withCredentials: true })
+      .get(`${local_backend_ip}/api/cart`, { withCredentials: true })
       .then((res) => {
         // console.log(res)
         setCart(res.data)

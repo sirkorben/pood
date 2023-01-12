@@ -11,7 +11,7 @@ const MyOrders = () => {
   const [myOrders, setMyOrders] = useState([])
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/myorders`, { withCredentials: true })
+      .get(`${local_backend_ip}/api/myorders`, { withCredentials: true })
       .then((res) => {
         console.log(res.data)
         setMyOrders(res.data.orders)
@@ -58,7 +58,7 @@ export const MyOrder = () => {
   const [order, setOrder] = useState({})
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/myorders/order?id=${id}`, {
+      .get(`${local_backend_ip}/api/myorders/order?id=${id}`, {
         withCredentials: true,
       })
       .then((res) => {

@@ -43,7 +43,7 @@ const Products = () => {
     if (quantity !== 0) {
       axios
         .post(
-          `${local_backend_ip}/cart/add`,
+          `${local_backend_ip}/api/cart/add`,
           JSON.stringify({
             price: result.price,
             article: result.article,

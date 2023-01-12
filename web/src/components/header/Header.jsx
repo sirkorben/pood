@@ -89,7 +89,7 @@ const SignOutButton = () => {
 
   const handleClick = () => {
     axios
-      .get(`${local_backend_ip}/signout`, { withCredentials: true })
+      .get(`${local_backend_ip}/api/signout`, { withCredentials: true })
       .then(() => {
         setLogged(false)
         setResults([])

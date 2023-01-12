@@ -15,7 +15,7 @@ const Cart = () => {
   const handleRemove = async (order_id) => {
     setRemoved(true)
     await axios
-      .delete(`${local_backend_ip}/cart/remove`, {
+      .delete(`${local_backend_ip}/api/cart/remove`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
         data: JSON.stringify({
@@ -53,7 +53,9 @@ const Cart = () => {
     setConfirmed(true)
 
     await axios
-      .post(`${local_backend_ip}/cart/confirm`, null, { withCredentials: true })
+      .post(`${local_backend_ip}/api/cart/confirm`, null, {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res)
         setOrderConfirmed(true)
@@ -86,7 +88,7 @@ const Cart = () => {
   const handleItemRemove = async (position_id) => {
     setRemoved(true)
     await axios
-      .delete(`${local_backend_ip}/cart/removeitem`, {
+      .delete(`${local_backend_ip}/api/cart/removeitem`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
         data: JSON.stringify({
@@ -165,7 +167,7 @@ const Cart = () => {
     </div>
   )
 }
-
+//TODO - understand how to implement it
 const PlacedOrderMessage = ({ order_id }) => {
   return (
     <div>

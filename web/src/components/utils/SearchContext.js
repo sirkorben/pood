@@ -13,7 +13,7 @@ const SearchContextProvider = (props) => {
   const SearchRequest = (article) => {
     const response = axios
       .post(
-        `${local_backend_ip}/search`,
+        `${local_backend_ip}/api/search`,
         JSON.stringify({
           article,
         }),

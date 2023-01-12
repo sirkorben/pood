@@ -33,7 +33,7 @@ export const AdminApprove = () => {
   const [approve, setApprove] = useState(false)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/admin/approve`, { withCredentials: true })
+      .get(`${local_backend_ip}/api/admin/approve`, { withCredentials: true })
       .then((res) => {
         console.log(res.data)
         setUsers(res.data)
@@ -44,7 +44,7 @@ export const AdminApprove = () => {
   const handleApprove = async (user) => {
     setApprove(true)
     axios.patch(
-      `${local_backend_ip}/admin/approve`,
+      `${local_backend_ip}/api/admin/approve`,
       JSON.stringify({
         id: user.id,
         firstname: user.firstname,
@@ -106,7 +106,9 @@ export const AdminManagePercent = () => {
   const [percent, setPercent] = useState(1.15)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/admin/managepercent`, { withCredentials: true })
+      .get(`${local_backend_ip}/api/admin/managepercent`, {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res.data)
         setUsers(res.data)
@@ -118,7 +120,7 @@ export const AdminManagePercent = () => {
     setManage(true)
     axios
       .patch(
-        `${local_backend_ip}/admin/managepercent`,
+        `${local_backend_ip}/api/admin/managepercent`,
         JSON.stringify({
           id: user.id,
           user_percent: Number(percent),
@@ -192,7 +194,7 @@ export const AdminManageOrders = () => {
 
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/admin/orders`, { withCredentials: true })
+      .get(`${local_backend_ip}/api/admin/orders`, { withCredentials: true })
       .then((res) => {
         /* console.log(res.data.orders) */
         setOrders(res.data.orders)
@@ -230,7 +232,7 @@ export const AdminSingleOrder = () => {
   const { me } = useContext(UserContext)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/admin/orders/order?id=${id}`, {
+      .get(`${local_backend_ip}/api/admin/orders/order?id=${id}`, {
         withCredentials: true,
       })
       .then((res) => {

@@ -20,7 +20,7 @@ const AdminPage = () => {
           <Link to={"/admin/orders"}>ADMIN MANAGE ORDERS</Link>
         </div>
       ) : (
-        <div>Not allowed</div>
+        <div className={styles.not_allowed}>Not allowed</div>
       )}
     </div>
   )
@@ -202,9 +202,9 @@ export const AdminManageOrders = () => {
   }, [])
 
   return (
-    <div>
+    <div className="orders_wrapper">
       {me.is_admin === 1 ? (
-        <div className="orders_wrapper">
+        <div>
           {orders ? (
             <div className="orders_card">
               <h2>Active orders</h2>
@@ -220,7 +220,7 @@ export const AdminManageOrders = () => {
           )}
         </div>
       ) : (
-        <div>Not allowed</div>
+        <div className={styles.not_allowed}>Not allowed</div>
       )}
     </div>
   )
@@ -283,7 +283,7 @@ export const AdminSingleOrder = () => {
               </div>
             </div>
           ) : (
-            <div>Not allowed</div>
+            <div className={styles.not_allowed}>Not allowed</div>
           )}
         </div>
       )}

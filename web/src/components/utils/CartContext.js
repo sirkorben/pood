@@ -13,12 +13,12 @@ export const CartContextProvider = (props) => {
 
   const [itemsInCart, setItemsInCart] = useState(0)
   const { logged } = useContext(UserContext)
-  console.log(added)
+  //console.log(added)
   useEffect(() => {
     axios
       .get(`${local_backend_ip}/cart`, { withCredentials: true })
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         setCart(res.data)
         setItemsInCart(res.data.products?.length)
       })

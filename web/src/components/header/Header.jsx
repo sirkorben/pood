@@ -64,7 +64,9 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <Link className={styles.nav__link}>My orders</Link>
+                <Link className={styles.nav__link} to={"/myorders"}>
+                  My orders
+                </Link>
               </li>
               <li>
                 <Link className={styles.nav__link} to="/me">

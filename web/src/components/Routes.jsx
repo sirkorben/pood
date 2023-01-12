@@ -6,9 +6,8 @@ import { AdminApprove, AdminManagePercent } from "../pages/admin/Admin"
 import Me from "../pages/me/Me"
 import SearchPage from "../pages/search/Search"
 import Cart from "../pages/cart/Cart"
-
-import Products from "./products/Products"
-
+import MyOrders from "../pages/myorders/MyOrders"
+import { MyOrder } from "../pages/myorders/MyOrders"
 const AllRoutes = () => {
   return (
     <div>
@@ -20,11 +19,9 @@ const AllRoutes = () => {
           <Route path="/me" element={<Me />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/cart" element={<Cart />} />
-          {/*  <Route path="signin" element={<SignIn />} />
-          <Route path="signup" element={<SignUp />} /> */}
-          {/* <Route path="products" element={<Products />} /> */}
+          <Route path="/myorders" element={<MyOrders />} />
+          <Route path="/myorders/:id" element={<MyOrder />} />
           <Route path="/home" element={<Home />} />
-          {/* <Route path="/search" element={<SearchBar />} /> */}
         </Routes>
       </div>
     </div>

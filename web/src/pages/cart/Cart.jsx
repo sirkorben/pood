@@ -5,11 +5,13 @@ import { local_backend_ip } from "../../App"
 import { CartContext } from "../../components/utils/CartContext"
 import styles from "./Cart.module.scss"
 import { toast } from "react-toastify"
+import { Link } from "react-router-dom"
+import { useState } from "react"
 
 const Cart = () => {
   const { cart, setRemoved, setConfirmed } = useContext(CartContext)
   console.log(cart)
-
+  const [orderConfirmed, setOrderConfirmed] = useState(false)
   const handleRemove = async (order_id) => {
     setRemoved(true)
     await axios
@@ -54,7 +56,7 @@ const Cart = () => {
       .post(`${local_backend_ip}/cart/confirm`, null, { withCredentials: true })
       .then((res) => {
         console.log(res)
-
+        setOrderConfirmed(true)
         toast.info("Your order was placed", {
           position: "top-right",
           autoClose: 5000,
@@ -160,6 +162,17 @@ const Cart = () => {
       ) : (
         <div>Your cart is empty now</div>
       )}
+    </div>
+  )
+}
+
+const PlacedOrderMessage = ({ order_id }) => {
+  return (
+    <div>
+      <div>Your order was successfuly placed.</div>
+      <div>
+        Check my order: <Link to={`/${order_id}`}>{order_id}</Link>
+      </div>
     </div>
   )
 }

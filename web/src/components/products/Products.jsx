@@ -1,5 +1,5 @@
 import React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useContext } from "react"
 import { SearchContext } from "../utils/SearchContext"
 import styles from "./Products.module.scss"
@@ -32,19 +32,15 @@ import { toast } from "react-toastify"
 } */
 const Products = () => {
   const { results } = useContext(SearchContext)
-  /* const [quantity, setQuantity] = useState(0) */
   const [quantity, setQuantity] = useState(0)
-  const { cart, added, setAdded } = useContext(CartContext)
-
-  //console.log(added)
-  //console.log(results)
+  const { setAdded } = useContext(CartContext)
 
   console.log(results)
   const handleAdd = async (result) => {
     console.log(quantity)
     /* setAdded(true) */
 
-    if (quantity != 0) {
+    if (quantity !== 0) {
       axios
         .post(
           `${local_backend_ip}/cart/add`,
@@ -66,6 +62,10 @@ const Products = () => {
         )
         .then(() => {
           setAdded(true)
+          Array.from(document.querySelectorAll("input")).forEach(
+            (input) => (input.value = "")
+          )
+
           toast.success("Item added to cart", {
             position: "top-right",
             autoClose: 5000,
@@ -97,12 +97,11 @@ const Products = () => {
     }
   }
 
-  const handleChange = (e, id) => {
-    /*  console.log("q ", e.target.value)
-    console.log("id", id) */
+  /*   const handleChange = (e, id) => {
+    
     setQuantity(e.target.value)
     console.log(quantity)
-  }
+  } */
 
   return (
     <div className={styles.products_wrapper}>
@@ -134,7 +133,7 @@ const Products = () => {
                 /* value={result.quantity} */
                 onChange={(e) => {
                   setQuantity(e.target.value)
-                  console.log(quantity)
+                  // console.log(quantity)
                 }}
               />
 

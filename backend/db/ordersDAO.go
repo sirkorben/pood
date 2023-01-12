@@ -65,34 +65,6 @@ func GetConfirmedOrderIds(userId int) ([]string, error) {
 	return orderIds, nil
 }
 
-func GetConfirmedOrderIdsForAdmin() ([]string, error) {
-	rows, err := DB.Query("select id, user_id from orders WHERE confirmed = 1 ORDER BY date_created desc")
-	if err != nil {
-		// handle error
-		log.Println(err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	var orderIds []string
-	for rows.Next() {
-		var orderId string
-		err = rows.Scan(&orderId)
-		if err != nil {
-			// handle err
-			// return nil, err
-			log.Println(err)
-			return nil, err
-		}
-		orderIds = append(orderIds, orderId)
-	}
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	return orderIds, nil
-}
-
 func ConfirmOrder(userId int) (string, error) {
 	orderId, err := GetNonConfirmedOrderId(userId)
 	if err != nil {
@@ -161,34 +133,6 @@ func DeletePositionFromCart(positionId string) error {
 	}
 	return nil
 }
-
-// func GetConfirmedUserOrders(userId int) ([]string, error) {
-// 	rows, err := DB.Query("select id from orders WHERE confirmed = 1 ORDER BY date_created desc")
-// 	if err != nil {
-// 		// handle error
-// 		log.Println(err)
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
-
-// 	var userOrders []string
-// 	for rows.Next() {
-// 		var orderId string
-// 		err = rows.Scan(&orderId)
-// 		if err != nil {
-// 			// handle err
-// 			// return nil, err
-// 			log.Println(err)
-// 			return nil, err
-// 		}
-// 		userOrders = append(userOrders, orderId)
-// 	}
-// 	if err != nil {
-// 		log.Println(err)
-// 		return nil, err
-// 	}
-// 	return userOrders, nil
-// }
 
 func GetConfirmedUserOrders(userId int) ([]*models.UserOrder, error) {
 	rows, err := DB.Query("select id, date_created from orders WHERE confirmed = 1 and user_id = ? ORDER BY date_created desc", userId)

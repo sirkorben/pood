@@ -176,9 +176,9 @@ func ManageUserPercent(id int, percent float64) error {
 }
 
 func GetUserProfile(id int) (*models.User, error) {
-	row := DB.QueryRow("select id, firstname, lastname, email, date_created from users where id = ?", id)
+	row := DB.QueryRow("select id, firstname, lastname, is_admin, email, date_created from users where id = ?", id)
 	u := &models.User{}
-	err := row.Scan(&u.Id, &u.FirstName, &u.LastName, &u.Email, &u.DateCreated)
+	err := row.Scan(&u.Id, &u.FirstName, &u.LastName, &u.IsAdmin, &u.Email, &u.DateCreated)
 	if err != nil {
 		log.Println(err)
 		if errors.Is(err, sql.ErrNoRows) {

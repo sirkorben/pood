@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 )
 
 // maybe better place for it?
@@ -116,10 +117,15 @@ type UserOrders struct {
 type UserOrder struct {
 	OrderId     string     `json:"order_id"`
 	DateCreated int        `json:"date_created"`
+	TotalPrice  float64    `json:"total_price"` // newly added
 	Positions   []*Product `json:"positions,omitempty"`
 }
 
 func CollectUserOrder(order *UserOrder, orderId string, dateCreated int) {
 	order.OrderId = orderId
 	order.DateCreated = dateCreated
+	for _, prod := range order.Positions { // newly added
+		fmt.Println(prod.ProductQuantityPrice)
+		order.TotalPrice += prod.ProductQuantityPrice
+	}
 }

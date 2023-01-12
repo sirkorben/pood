@@ -295,8 +295,8 @@ func adminIncreasePriceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// show all users' orders
 func adminOrdersHandler(w http.ResponseWriter, r *http.Request) {
-	// show all users' orders
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -318,8 +318,9 @@ func adminOrdersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// show confirmed orders for user
 func userOrders(w http.ResponseWriter, r *http.Request) {
-	// show user confirmed orders
+
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -341,8 +342,8 @@ func userOrders(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// show user confirmed order by query param /order?id=8d6a4012-98e9-4a38-82e3-c27f6fbbf419
 func order(w http.ResponseWriter, r *http.Request) {
-	// show user confirmed order by query param /order?id=8d6a4012-98e9-4a38-82e3-c27f6fbbf419
 	if r.Method == http.MethodOptions {
 		return
 	}

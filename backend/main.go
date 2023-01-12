@@ -33,23 +33,23 @@ func main() {
 
 func routes() *http.ServeMux {
 	sm := http.NewServeMux()
-	sm.HandleFunc("/me", helpers.HandleCors(me))                                         // GET
-	sm.HandleFunc("/signup", helpers.HandleCors(signUp))                                 // POST
-	sm.HandleFunc("/signin", helpers.HandleCors(signIn))                                 // POST
-	sm.HandleFunc("/signout", helpers.HandleCors(signOut))                               // GET
-	sm.HandleFunc("/search", helpers.HandleCors(search))                                 // POST
-	sm.HandleFunc("/admin/", helpers.HandleCors(admin))                                  // GET
-	sm.HandleFunc("/admin/approve", helpers.HandleCors(adminApproveHandler))             // GET, PATCH
-	sm.HandleFunc("/admin/managepercent", helpers.HandleCors(adminIncreasePriceHandler)) // GET, PATCH
-	sm.HandleFunc("/admin/orders", helpers.HandleCors(adminOrdersHandler))               // GET, PATCH (not implemented)  ???
-	sm.HandleFunc("/admin/orders/order", helpers.HandleCors(adminOrderHandler))          // GET, PATCH (not implemented)  ???
-	sm.HandleFunc("/myorders", helpers.HandleCors(userOrders))                           // GET
-	sm.HandleFunc("/myorders/order", helpers.HandleCors(order))                          // GET by query parameter
-	sm.HandleFunc("/cart", helpers.HandleCors(shoppingCart))                             // GET, POST
-	sm.HandleFunc("/cart/add", helpers.HandleCors(addItemToCart))                        // POST
-	sm.HandleFunc("/cart/confirm", helpers.HandleCors(confirmCart))                      // POST
-	sm.HandleFunc("/cart/remove", helpers.HandleCors(removeCart))                        // DELETE
-	sm.HandleFunc("/cart/removeitem", helpers.HandleCors(removeItemFromCart))            // DELETE
+	sm.HandleFunc("api/me", helpers.HandleCors(me))                                         // GET
+	sm.HandleFunc("api/signup", helpers.HandleCors(signUp))                                 // POST
+	sm.HandleFunc("api/signin", helpers.HandleCors(signIn))                                 // POST
+	sm.HandleFunc("api/signout", helpers.HandleCors(signOut))                               // GET
+	sm.HandleFunc("api/search", helpers.HandleCors(search))                                 // POST
+	sm.HandleFunc("api/admin/", helpers.HandleCors(admin))                                  // GET
+	sm.HandleFunc("api/admin/approve", helpers.HandleCors(adminApproveHandler))             // GET, PATCH
+	sm.HandleFunc("api/admin/managepercent", helpers.HandleCors(adminIncreasePriceHandler)) // GET, PATCH
+	sm.HandleFunc("api/admin/orders", helpers.HandleCors(adminOrdersHandler))               // GET, PATCH (not implemented)  ???
+	sm.HandleFunc("api/admin/orders/order", helpers.HandleCors(adminOrderHandler))          // GET, PATCH (not implemented)  ???
+	sm.HandleFunc("api/myorders", helpers.HandleCors(userOrders))                           // GET
+	sm.HandleFunc("api/myorders/order", helpers.HandleCors(order))                          // GET by query parameter
+	sm.HandleFunc("api/cart", helpers.HandleCors(shoppingCart))                             // GET, POST
+	sm.HandleFunc("api/cart/add", helpers.HandleCors(addItemToCart))                        // POST
+	sm.HandleFunc("api/cart/confirm", helpers.HandleCors(confirmCart))                      // POST
+	sm.HandleFunc("api/cart/remove", helpers.HandleCors(removeCart))                        // DELETE
+	sm.HandleFunc("api/cart/removeitem", helpers.HandleCors(removeItemFromCart))            // DELETE
 	return sm
 }
 

@@ -34,7 +34,7 @@ const SignInForm = () => {
     e.preventDefault()
     const res = await axios
       .post(
-        `${local_backend_ip}/signin`, // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
+        `${local_backend_ip}/api/signin`,
         JSON.stringify({
           email,
           password,
@@ -107,7 +107,7 @@ const SignUpForm = () => {
 
     const res = await axios
       .post(
-        `${local_backend_ip}/signup`, // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
+        `${local_backend_ip}/api/signup`, // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
         JSON.stringify({
           firstname,
           lastname,

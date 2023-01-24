@@ -2,7 +2,6 @@ import axios from "axios"
 import React from "react"
 import { useState } from "react"
 import styles from "./Admin.module.scss"
-import { local_backend_ip } from "../../App"
 import { useEffect } from "react"
 import { Link, useParams } from "react-router-dom"
 import { useContext } from "react"
@@ -33,7 +32,7 @@ export const AdminApprove = () => {
   const [approve, setApprove] = useState(false)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/api/admin/approve`, { withCredentials: true })
+      .get(`/api/admin/approve`, { withCredentials: true })
       .then((res) => {
         console.log(res.data)
         setUsers(res.data)
@@ -44,7 +43,7 @@ export const AdminApprove = () => {
   const handleApprove = async (user) => {
     setApprove(true)
     axios.patch(
-      `${local_backend_ip}/api/admin/approve`,
+      `/api/admin/approve`,
       JSON.stringify({
         id: user.id,
         firstname: user.firstname,
@@ -106,7 +105,7 @@ export const AdminManagePercent = () => {
   const [percent, setPercent] = useState(1.15)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/api/admin/managepercent`, {
+      .get(`/api/admin/managepercent`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -120,7 +119,7 @@ export const AdminManagePercent = () => {
     setManage(true)
     axios
       .patch(
-        `${local_backend_ip}/api/admin/managepercent`,
+        `/api/admin/managepercent`,
         JSON.stringify({
           id: user.id,
           user_percent: Number(percent),
@@ -194,7 +193,7 @@ export const AdminManageOrders = () => {
 
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/api/admin/orders`, { withCredentials: true })
+      .get(`/api/admin/orders`, { withCredentials: true })
       .then((res) => {
         /* console.log(res.data.orders) */
         setOrders(res.data.orders)
@@ -232,7 +231,7 @@ export const AdminSingleOrder = () => {
   const { me } = useContext(UserContext)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/api/admin/orders/order?id=${id}`, {
+      .get(`/api/admin/orders/order?id=${id}`, {
         withCredentials: true,
       })
       .then((res) => {

@@ -8,7 +8,6 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import Header from "./components/header/Header"
 
-export const local_backend_ip = `http://localhost:8080` // `${process.env.REACT_APP_BACKEND_URL}`
 
 function App() {
   const { logged } = useContext(UserContext)

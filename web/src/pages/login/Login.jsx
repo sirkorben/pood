@@ -3,7 +3,6 @@ import { useState, useContext } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { UserContext } from "../../components/utils/UserContext"
 import axios from "axios"
-import { local_backend_ip } from "../../App"
 import { ToastContainer, toast } from "react-toastify"
 import "./Login.scss"
 
@@ -34,7 +33,7 @@ const SignInForm = () => {
     e.preventDefault()
     const res = await axios
       .post(
-        `${local_backend_ip}/api/signin`,
+        `/api/signin`,
         JSON.stringify({
           email,
           password,
@@ -107,7 +106,7 @@ const SignUpForm = () => {
 
     const res = await axios
       .post(
-        `${local_backend_ip}/api/signup`, // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
+        `/api/signup`, // for dev use ${local_backend_ip} in containers/prod use ${process.env.REACT_APP_BACKEND_URL}
         JSON.stringify({
           firstname,
           lastname,

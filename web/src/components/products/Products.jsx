@@ -4,7 +4,6 @@ import { useContext } from "react"
 import { SearchContext } from "../utils/SearchContext"
 import styles from "./Products.module.scss"
 import axios from "axios"
-import { local_backend_ip } from "../../App"
 import { CartContext } from "../utils/CartContext"
 import { toast } from "react-toastify"
 /* "price": 16.46,
@@ -43,7 +42,7 @@ const Products = () => {
     if (quantity !== 0) {
       axios
         .post(
-          `${local_backend_ip}/api/cart/add`,
+          `/api/cart/add`,
           JSON.stringify({
             price: result.price,
             article: result.article,

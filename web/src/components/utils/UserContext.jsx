@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { createContext } from "react"
 import axios from "axios"
-import { local_backend_ip } from "../../App"
 export const UserContext = createContext()
 
 export const UserContextProvider = (props) => {
@@ -12,7 +11,7 @@ export const UserContextProvider = (props) => {
   // console.log(logged)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/api/me`, { withCredentials: true })
+      .get(`/api/me`, { withCredentials: true })
       .then((res) => {
         setMe(res.data)
         setLogged(true)

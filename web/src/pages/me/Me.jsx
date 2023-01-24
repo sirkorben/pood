@@ -4,6 +4,7 @@ import { SearchContext } from "../../components/utils/SearchContext"
 import { UserContext } from "../../components/utils/UserContext"
 import styles from "./Me.module.scss"
 import { Link } from "react-router-dom"
+
 const Me = () => {
   const { me } = useContext(UserContext)
   const { setResults } = useContext(SearchContext)

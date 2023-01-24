@@ -19,7 +19,7 @@ func me(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		s, err := db.CheckSession(r)
 		if err != nil {
-			helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+			helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusUnauthorized)
 			return
 		}
 
@@ -29,10 +29,10 @@ func me(w http.ResponseWriter, r *http.Request) {
 			if errors.Is(err, models.ErrNoRecord) {
 				helpers.ErrorResponse(w, helpers.BadRequestErrorMsg, http.StatusBadRequest)
 			} else {
-				helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+				helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusUnauthorized)
 
 			}
-			log.Println(err.Error())
+			log.Println("ME ERROR	", err.Error())
 			return
 		}
 		helpers.WriteResponse(u, w) // check for possible errors
@@ -409,7 +409,7 @@ func shoppingCart(w http.ResponseWriter, r *http.Request) {
 
 	s, err := db.CheckSession(r)
 	if err != nil {
-		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusInternalServerError)
+		helpers.ErrorResponse(w, helpers.UnauthorizedErrorMsg, http.StatusUnauthorized)
 		return
 	}
 

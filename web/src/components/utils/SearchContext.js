@@ -1,7 +1,6 @@
 import axios from "axios"
 import { createContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { local_backend_ip } from "../../App"
 export const SearchContext = createContext()
 
 /* const PARTS_API_KEY =
@@ -13,7 +12,7 @@ const SearchContextProvider = (props) => {
   const SearchRequest = (article) => {
     const response = axios
       .post(
-        `${local_backend_ip}/api/search`,
+        `/api/search`,
         JSON.stringify({
           article,
         }),

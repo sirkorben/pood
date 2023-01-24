@@ -1,6 +1,5 @@
 import axios from "axios"
 import { createContext, useContext, useEffect, useState } from "react"
-import { local_backend_ip } from "../../App"
 import { UserContext } from "./UserContext"
 
 export const CartContext = createContext()
@@ -16,7 +15,7 @@ export const CartContextProvider = (props) => {
   //console.log(added)
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/api/cart`, { withCredentials: true })
+      .get(`/api/cart`, { withCredentials: true })
       .then((res) => {
         // console.log(res)
         setCart(res.data)

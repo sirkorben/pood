@@ -1,7 +1,6 @@
 import axios from "axios"
 import React from "react"
 import { useContext } from "react"
-import { local_backend_ip } from "../../App"
 import { CartContext } from "../../components/utils/CartContext"
 import styles from "./Cart.module.scss"
 import { toast } from "react-toastify"
@@ -15,7 +14,7 @@ const Cart = () => {
   const handleRemove = async (order_id) => {
     setRemoved(true)
     await axios
-      .delete(`${local_backend_ip}/api/cart/remove`, {
+      .delete(`/api/cart/remove`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
         data: JSON.stringify({
@@ -53,7 +52,7 @@ const Cart = () => {
     setConfirmed(true)
 
     await axios
-      .post(`${local_backend_ip}/api/cart/confirm`, null, {
+      .post(`/api/cart/confirm`, null, {
         withCredentials: true,
       })
       .then((res) => {
@@ -88,7 +87,7 @@ const Cart = () => {
   const handleItemRemove = async (position_id) => {
     setRemoved(true)
     await axios
-      .delete(`${local_backend_ip}/api/cart/removeitem`, {
+      .delete(`/api/cart/removeitem`, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
         data: JSON.stringify({

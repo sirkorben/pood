@@ -3,7 +3,6 @@ import React from "react"
 import { useState } from "react"
 import { useEffect } from "react"
 import { useParams, Link } from "react-router-dom"
-import { local_backend_ip } from "../../App"
 import styles from "./MyOrders.module.scss"
 import "../../styles/orders-list.scss"
 
@@ -11,7 +10,7 @@ const MyOrders = () => {
   const [myOrders, setMyOrders] = useState([])
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/api/myorders`, { withCredentials: true })
+      .get(`/api/myorders`, { withCredentials: true })
       .then((res) => {
         console.log(res.data)
         setMyOrders(res.data.orders)
@@ -58,7 +57,7 @@ export const MyOrder = () => {
   const [order, setOrder] = useState({})
   useEffect(() => {
     axios
-      .get(`${local_backend_ip}/api/myorders/order?id=${id}`, {
+      .get(`/api/myorders/order?id=${id}`, {
         withCredentials: true,
       })
       .then((res) => {

@@ -5,7 +5,6 @@ import { useContext } from "react"
 import { UserContext } from "../utils/UserContext"
 import { useNavigate, Link } from "react-router-dom"
 import axios from "axios"
-import { local_backend_ip } from "../../App"
 import { SearchContext } from "../utils/SearchContext"
 import { CartContext } from "../utils/CartContext"
 /* const Header = () => {
@@ -89,7 +88,7 @@ const SignOutButton = () => {
 
   const handleClick = () => {
     axios
-      .get(`${local_backend_ip}/api/signout`, { withCredentials: true })
+      .get(`/api/signout`, { withCredentials: true })
       .then(() => {
         setLogged(false)
         setResults([])

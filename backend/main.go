@@ -12,7 +12,8 @@ func main() {
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
-	setENV() // create .env file inside a container with all needed variables
+	// manage variables on the droplet in DO
+	setENV()
 
 	s := &http.Server{
 		Addr:     ":8080",

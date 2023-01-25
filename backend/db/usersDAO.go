@@ -107,6 +107,20 @@ func GetFirstNameById(id int) (*models.User, error) {
 	return u, nil
 }
 
+func GetEmailById(id int) (string, error) {
+	row := DB.QueryRow("SELECT email FROM users WHERE id = ?", id)
+	var u string
+	err := row.Scan(&u)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", models.ErrNoRecord
+		} else {
+			return "", err
+		}
+	}
+	return u, nil
+}
+
 func GetNonActivatedUsers() ([]*models.User, error) {
 	var users []*models.User
 

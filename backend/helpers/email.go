@@ -9,27 +9,26 @@ import (
 	"pood/models"
 )
 
-func SendEmail(order models.UserOrder) error {
-	// finish the logic send email to the client postbox
+func SendEmail(order models.UserOrder, uemail string) error {
 
-	log.Println(order)
 	var orderString = fmt.Sprintf("\nOrder Id - %v\n", order.OrderId)
+	var totalPrice float64
 	for _, position := range order.Positions {
 		orderString += template(position)
+		totalPrice += position.ProductQuantityPrice
 	}
-	log.Println(orderString)
+
 	from := os.Getenv("POOD_ADMIN_EMAIL")
 	password := os.Getenv("POOD_EMAIL_PASSWORD")
 
-	toEmailAddress := "vejlevas@gmail.com"
-	to := []string{toEmailAddress}
+	to := []string{uemail}
 
 	host := "smtp.gmail.com"
 	port := "587"
 	address := host + ":" + port
 
-	subject := "Subject: Danja pidor lovi zakaz svoj\n"
-	body := "Thanks for your order! Your order is being processed. For any information please reach out the Daniil Batjkovichj by email" + orderString
+	subject := "Subject: Order confirmed by NPD\n"
+	body := "Thanks for your order! Your order is being processed. For any information please reach out the Daniil Batjkovichj by email" + orderString + "\nTotal Price: " + fmt.Sprintf("%f", totalPrice)
 	message := []byte(subject + body)
 
 	auth := smtp.PlainAuth("", from, password, host)
@@ -39,6 +38,9 @@ func SendEmail(order models.UserOrder) error {
 		log.Println(err2)
 		return err2
 	}
+
+	log.Println(orderString)
+	log.Println("done with email ?!")
 	return nil
 }
 

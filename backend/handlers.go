@@ -461,8 +461,6 @@ func addItemToCart(w http.ResponseWriter, r *http.Request) {
 
 func confirmCart(w http.ResponseWriter, r *http.Request) {
 
-	//	TODO: send information about confirmed order to client and admin emails
-
 	if r.Method == http.MethodOptions {
 		return
 	}
@@ -490,6 +488,7 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			return
 		}
+
 		dateCreated, err := db.GetOrderDateCreated(orderId)
 		models.CollectUserOrder(&order, orderId, dateCreated)
 		if err != nil {
@@ -497,13 +496,16 @@ func confirmCart(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		/* err = helpers.SendEmail(order)
+		uemail, err := db.GetEmailById(s.User.Id)
+		log.Println(uemail)
+
+		err = helpers.SendEmail(order, uemail)
 		if err != nil {
 			log.Println("helpers.SendEmail err -> ", err)
 			helpers.ErrorResponse(w, helpers.InternalServerErrorMsg, http.StatusInternalServerError)
 			return
 		}
-		log.Println("email sent") */
+		log.Println("email sent")
 		helpers.InfoResponse(w, helpers.OrderConfirmedInfoMsg, http.StatusCreated)
 
 	}

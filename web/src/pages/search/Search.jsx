@@ -22,7 +22,7 @@ const SearchPage = () => {
     setResults([])
   }, [])
   return (
-    <div className={styles.search_wrapper}>
+    <div className={styles.search_container}>
       <Input />
       <Products />
     </div>
@@ -40,7 +40,7 @@ const Input = () => {
   }
 
   return (
-    <div className={styles.search}>
+    <div className={styles.search_container__searchbar_wrapper}>
       <input
         placeholder="Enter article number"
         type="text"

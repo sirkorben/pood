@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
 import { createContext } from "react"
 import axios from "axios"
+import { backend_url } from "../../App"
+import myAxios from "./api/axios"
 export const UserContext = createContext()
 
 export const UserContextProvider = (props) => {
@@ -10,15 +12,15 @@ export const UserContextProvider = (props) => {
 
   // console.log(logged)
   useEffect(() => {
-    axios
-      .get(`/api/me`, { withCredentials: true })
+    myAxios
+      .get("/api/me")
       .then((res) => {
         setMe(res.data)
         setLogged(true)
       })
       .catch((err) => {
         setLogged(false)
-        console.log("ERROR! ", err)
+        console.log("ERROR!", err)
       })
   }, [logged])
 

@@ -1,45 +1,55 @@
 import React from "react"
 import styles from "./Header.module.scss"
-import SearchBar from "../../pages/search/Search"
 import { useContext } from "react"
 import { UserContext } from "../utils/UserContext"
 import { useNavigate, Link } from "react-router-dom"
-import axios from "axios"
 import { SearchContext } from "../utils/SearchContext"
 import { CartContext } from "../utils/CartContext"
-/* const Header = () => {
-  const { logged } = useContext(UserContext)
-  return (
-    <div className={styles.header}>
-      {logged === false ? null : (
-        <div className={styles.header__content}>
-          <div>
-            <span className={styles.logo}>4H0615108F</span>
-            <br></br>
-            <span className={styles.logo}>4M2820160</span>
-
-          </div>
-          <div>
-            {" "}
-            <nav className={styles.nav}>
-              <div className={styles.nav__item}>
-                <SearchBar />
-              </div>
-           
-            </nav>
-          </div>
-          <div>
-            <div className={styles.header__button__container}>
-              <SignOutButton />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-} */
+import myAxios from "../utils/api/axios"
 
 const Header = () => {
+  const { logged } = useContext(UserContext)
+  const { itemsInCart } = useContext(CartContext)
+  if (!logged) return null
+
+  return (
+    <div className={styles.headerWrapper}>
+      <div className={styles.headerWrapper__title}>
+        Parts<span className={styles.hub}>hub</span>
+      </div>
+      <nav>
+        <ul className={styles.nav_list}>
+          <li>
+            <Link className={styles.nav_list__item} to="/me">
+              Me
+            </Link>
+          </li>
+          <li>
+            <Link className={styles.nav_list__item} to="/search">
+              Search
+            </Link>
+          </li>
+          <li>
+            <Link className={styles.nav_list__item} to="/myorders">
+              My orders
+            </Link>
+          </li>
+          <li>
+            <Link className={styles.nav_list__item} to="/cart">
+              Cart
+            </Link>
+          </li>
+          {itemsInCart ? (
+            <li className={styles.quantity}>{itemsInCart}</li>
+          ) : null}
+        </ul>
+      </nav>
+      <SignOutButton />
+    </div>
+  )
+}
+
+/* const Header = () => {
   const { logged } = useContext(UserContext)
   const { itemsInCart } = useContext(CartContext)
   return (
@@ -79,7 +89,7 @@ const Header = () => {
       )}
     </div>
   )
-}
+} */
 
 const SignOutButton = () => {
   const nav = useNavigate()
@@ -87,17 +97,15 @@ const SignOutButton = () => {
   const { setResults } = useContext(SearchContext)
 
   const handleClick = () => {
-    axios
-      .get(`/api/signout`, { withCredentials: true })
-      .then(() => {
-        setLogged(false)
-        setResults([])
-        nav("/")
-      })
+    myAxios.get("/api/signout").then(() => {
+      setLogged(false)
+      setResults([])
+      nav("/")
+    })
   }
   return (
     <div className={styles.button}>
-      <button onClick={handleClick}>Sign Out</button>
+      <button onClick={handleClick}>Logout</button>
     </div>
   )
 }

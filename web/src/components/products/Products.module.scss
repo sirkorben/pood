@@ -1,6 +1,88 @@
 @import "../../styles/variables.scss";
 
-.products_wrapper {
+.productsWrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  row-gap: 80px;
+  column-gap: 100px;
+  /*  gap: 80px; */
+  justify-content: center;
+  &__product_card_wrapper {
+    width: 275px;
+    height: 350px;
+    /* background-color: white; */
+    /* margin-bottom: 20px; */
+  }
+}
+
+.product_card_info {
+  background-color: $main-light;
+  color: $main-dark;
+  height: 265px;
+  font-size: 18px;
+  padding-top: 20px;
+  border-radius: 33px;
+  margin-bottom: 16px;
+  /* text-align: left; */
+  .mark {
+    text-decoration: underline;
+    font-weight: 600;
+  }
+  ul {
+    list-style: none;
+    li {
+      margin-bottom: 3px;
+      &:last-child {
+        margin-bottom: 0px;
+      }
+    }
+  }
+}
+
+.addToCart_wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: $main-light;
+  width: 210px;
+  margin: 0 auto;
+  height: 40px;
+  border-radius: 16px;
+
+  input {
+    width: 35px;
+    height: 24px;
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid $main-dark;
+    font-size: 16px;
+    background-color: $main-light;
+    outline: none;
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+    &:focus {
+      &::placeholder {
+        color: $main-light;
+      }
+    }
+  }
+  button {
+    width: 115px;
+    height: 24px;
+    background-color: $main-dark;
+    text-align: center;
+    font-size: 16px;
+    &:hover {
+      cursor: pointer;
+      background-color: $main-dark_grey;
+    }
+  }
+}
+
+/* .products_wrapper {
   color: black;
   .title {
     padding-top: 20px;
@@ -15,7 +97,7 @@
     text-align: left;
     margin-bottom: 30px;
     &__items {
-      /* background-color: red; */
+      
       margin-bottom: 20px;
       ul {
         list-style-type: none;
@@ -55,12 +137,12 @@
       }
 
       .add_to_cart_button {
-        /* border: 1px solid white; */
+       
         width: 120px;
         height: 30px;
         font-weight: 700;
         border-radius: 10px;
-        /* background-color: rgb(14, 126, 42); */
+       
         &:hover {
           background-color: rgb(14, 126, 42);
           color: $text;
@@ -70,3 +152,4 @@
     }
   }
 }
+ */

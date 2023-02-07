@@ -2,12 +2,7 @@ import React from "react"
 import { Routes, Route } from "react-router-dom"
 import Home from "../pages/home/Home"
 import AdminPage from "../pages/admin/Admin"
-import {
-  AdminApprove,
-  AdminManagePercent,
-  AdminManageOrders,
-  AdminSingleOrder,
-} from "../pages/admin/Admin"
+import { AdminSingleOrder } from "../pages/admin/Admin"
 import Me from "../pages/me/Me"
 import SearchPage from "../pages/search/Search"
 import Cart from "../pages/cart/Cart"
@@ -19,9 +14,9 @@ const AllRoutes = () => {
       <div>
         <Routes>
           <Route path="/admin" element={<AdminPage />} />
-          <Route path="/admin/approve" element={<AdminApprove />} />
+          {/* <Route path="/admin/approve" element={<AdminApprove />} />
           <Route path="/admin/managepercent" element={<AdminManagePercent />} />
-          <Route path="/admin/orders" element={<AdminManageOrders />} />
+          <Route path="/admin/orders" element={<AdminManageOrders />} /> */}
           <Route path="/admin/orders/:id" element={<AdminSingleOrder />} />
           <Route path="/me" element={<Me />} />
           <Route path="/search" element={<SearchPage />} />

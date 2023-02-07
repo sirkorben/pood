@@ -1,3 +1,5 @@
+@import "../../styles/variables.scss";
+
 :root {
   --maincolor: linear-gradient(to right, #305ab3, #d7a7f0);
   --secondarycolor: rgb(85, 116, 219);
@@ -14,6 +16,7 @@
   background-color: white;
   padding: 20px 60px;
   border-radius: 10px;
+  display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
@@ -23,7 +26,8 @@
   }
 
   .title {
-    color: var(--secondarycolor);
+    color: $main-dark;
+
     font-weight: bold;
     font-size: 24px;
   }
@@ -38,28 +42,29 @@
       padding: 15px;
       border: none;
       width: 250px;
-      border-bottom: 1px solid var(--secondarycolor);
+      border-bottom: 1px solid $main-dark-grey;
       outline: none;
       &::placeholder {
-        color: rgb(76, 104, 104);
+        color: $main-dark-grey;
       }
     }
 
     button {
       border: none;
-      border-radius: 5px;
-      background-color: rgb(112, 125, 146);
+      /* border-radius: 5px; */
+      background-color: $main-dark;
       padding: 10px;
       font-weight: bold;
       color: white;
+      text-align: center;
       cursor: pointer;
       &:hover {
-        background-color: rgb(85, 116, 219);
+        background-color: $main-dark_grey;
       }
     }
   }
   p {
-    color: rgb(112, 125, 146);
+    color: $main-dark-grey;
     font-size: 12px;
     margin-top: 10px;
     span {

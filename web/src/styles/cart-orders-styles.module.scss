@@ -1,0 +1,113 @@
+@import "./variables.scss";
+
+.cart_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  /*  min-height: 100px; */
+  &__total_cart_info {
+    display: flex;
+    flex-direction: column;
+    padding-left: 29px;
+    padding-top: 23px;
+    background-color: $main-light;
+    gap: 12px;
+    color: $main-dark;
+    width: 675px;
+    min-height: 165px;
+    font-size: 24px;
+    font-weight: 600;
+    ul {
+      list-style: none;
+      padding: 0;
+      li {
+        margin-bottom: 12px;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .admin {
+      li {
+        &:last-child {
+          margin-bottom: 15px;
+        }
+      }
+    }
+  }
+  &__cart_items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* margin: 0 auto; */
+    row-gap: 60px;
+    column-gap: 80px;
+    ul {
+      list-style: none;
+      padding-left: 15px;
+      /* padding: 0; */
+      margin-bottom: 22px;
+      li {
+        margin-bottom: 3px;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    &__item_card {
+      min-width: 350px;
+      min-height: 370px;
+      background-color: $main-light;
+      color: $main-dark;
+      font-size: 18px;
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-radius: 33px;
+
+      .remove_button {
+        width: 150px;
+        height: 30px;
+        background-color: $main-dark;
+        color: $main-light;
+        text-align: center;
+        font-size: 18px;
+        &:hover {
+          cursor: pointer;
+          background-color: $main-dark_grey;
+        }
+      }
+    }
+  }
+}
+
+.mark {
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  &__button {
+    background-color: $main-dark;
+    color: $main-light;
+    width: 200px;
+    height: 30px;
+    text-align: center;
+    font-size: 22px;
+    &:hover {
+      cursor: pointer;
+      background-color: $main-dark_grey;
+    }
+  }
+}
+
+.price {
+  font-weight: 700;
+  text-decoration: underline;
+}

@@ -12,7 +12,29 @@ const Me = () => {
     setResults([])
   }, [])
   console.log(me)
+
   return (
+    <div className={styles.me_wrapper}>
+      <div className={styles.me_card}>
+        <ul>
+          <li>
+            {me.firstname} {me.lastname}{" "}
+            {me.is_admin === 1 ? <span>(Admin)</span> : null}
+          </li>
+          <li>{me.email}</li>
+          {me.is_admin === 1 ? (
+            <li>
+              <Link to={"/admin"} className={styles.link}>
+                {" "}
+                Admin panel
+              </Link>
+            </li>
+          ) : null}
+        </ul>
+      </div>
+    </div>
+  )
+  /*   return (
     <div className={styles.me_wrapper}>
       {me && (
         <div className={styles.me_card}>
@@ -28,7 +50,7 @@ const Me = () => {
         </div>
       )}
     </div>
-  )
+  ) */
 }
 
 export default Me

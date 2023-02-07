@@ -1,26 +1,43 @@
 @import "./variables.scss";
 .orders_wrapper {
-  color: $text2;
+  margin-bottom: 10px;
+  h2 {
+    color: $main-light;
+    margin-bottom: 20px;
+    font-size: 30px;
+  }
+
   .orders_card {
-    h2 {
-      margin-bottom: 20px;
+    background-color: $main-light;
+    color: $main-dark;
+    width: 700px;
+    min-height: 360px;
+    font-size: 20px;
+    padding-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-radius: 33px;
+  }
+
+  .orders_list {
+    margin-bottom: 8px;
+    &__order_id {
+      font-weight: 500;
     }
-
-    /*  .orders_list {
-      ul {
-        list-style-type: square;
-
-        li {
-          margin-bottom: 5px;
-        }
-      }
-    } */
+    &:last-child {
+      margin-bottom: 0px;
+    }
+    &__link {
+      color: $main-dark;
+    }
   }
 }
 
 //single order styles
 
-.order_wrapper {
+//single order styles OLD
+
+/* .order_wrapper {
   position: relative;
   left: 15%;
   .order_card {
@@ -31,7 +48,7 @@
     .position_card {
       border: 1px solid black;
       width: 350px;
-      /* height: 250px; */
+    
       text-align: left;
       padding-top: 10px;
       padding-left: 10px;
@@ -50,7 +67,6 @@
     }
 
     .user_information {
-      /*  border: 1px solid black; */
       margin-bottom: 20px;
       ul {
         list-style-type: square;
@@ -63,3 +79,4 @@
     }
   }
 }
+ */

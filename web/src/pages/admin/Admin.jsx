@@ -1,4 +1,3 @@
-import axios from "axios"
 import React from "react"
 import { useState } from "react"
 import styles from "./Admin.module.scss"
@@ -7,34 +6,37 @@ import { Link, useParams } from "react-router-dom"
 import { useContext } from "react"
 import { UserContext } from "../../components/utils/UserContext"
 import "../../styles/orders-list.scss"
+import myAxios from "../../components/utils/api/axios"
+import styles2 from "../../styles/cart-orders-styles.module.scss"
 
 const AdminPage = () => {
   const { me } = useContext(UserContext)
+  if (me.is_admin !== 1) return <div className="no_task">Not allowed</div>
+
   return (
-    <div>
-      {me.is_admin === 1 ? (
-        <div className={styles.admin}>
-          <Link to={"/admin/approve"}>ADMIN APPROVE</Link>
-          <Link to={"/admin/managepercent"}>ADMIN MANAGE PERCENT</Link>
-          <Link to={"/admin/orders"}>ADMIN MANAGE ORDERS</Link>
-        </div>
-      ) : (
-        <div className={styles.not_allowed}>Not allowed</div>
-      )}
+    <div className={styles.admin_wrapper}>
+      <h2 className={styles.title}>Admin panel</h2>
+      <h2 className={styles.section_title}>Active orders</h2>
+      <AdminManageOrders />
+      <h2 className={styles.section_title}>Manage Percent</h2>
+      <AdminManagePercent />
+      <h2 className={styles.section_title}>Approve users</h2>
+      <AdminApprove />
     </div>
   )
 }
 
-export const AdminApprove = () => {
+const AdminApprove = () => {
   const { me } = useContext(UserContext)
 
   const [users, setUsers] = useState([])
   const [approve, setApprove] = useState(false)
   useEffect(() => {
-    axios
-      .get(`/api/admin/approve`, { withCredentials: true })
+    myAxios
+      .get("/api/admin/approve")
+
       .then((res) => {
-        console.log(res.data)
+        //console.log(res.data)
         setUsers(res.data)
         setApprove(false)
       })
@@ -42,8 +44,8 @@ export const AdminApprove = () => {
 
   const handleApprove = async (user) => {
     setApprove(true)
-    axios.patch(
-      `/api/admin/approve`,
+    myAxios.patch(
+      "/api/admin/approve",
       JSON.stringify({
         id: user.id,
         firstname: user.firstname,
@@ -51,65 +53,44 @@ export const AdminApprove = () => {
         email: user.email,
         activated: user.activated,
         date_created: user.date_created,
-      }),
-      { withCredentials: true, headers: { "Content-Type": "application/json" } }
+      })
     )
   }
-  /*  "id": 3,
-  "firstname": "Artem",
-  "lastname": "Non-active",
-  "email": "tema@bravo.com",
-  "activated": 0,
-  "date_created": 1672740186 */
+
+  if (users === null) return <div className="no_task">No users to approve</div>
 
   return (
-    <div className={styles.admin_approve_wrapper}>
-      {me.is_admin === 1 ? (
-        <div>
-          <span>ADMIN APPROVE</span>
-          <div className={styles.users}>
-            {users ? (
-              users?.map((user) => (
-                <div key={user.id} className={styles.users__card}>
-                  <div>
-                    <label>Name: {user.firstname}</label>
-                  </div>
-                  <div>
-                    <label>ID: {user.id}</label>
-                  </div>
-                  <button
-                    className={styles.button}
-                    onClick={() => handleApprove(user)}
-                  >
-                    approve
-                  </button>
-                </div>
-              ))
-            ) : (
-              <div>No users to approve</div>
-            )}
+    <div className={styles.approve_wrapper}>
+      <div className={styles.users_container}>
+        {users?.map((user) => (
+          <div className={styles.user_card} key={user.id}>
+            <ul>
+              <li>
+                {user.firstname} {user.lastname}
+              </li>
+              <li>{user.email}</li>
+            </ul>
+            <button onClick={() => handleApprove(user)}>Approve</button>
           </div>
-        </div>
-      ) : (
-        <div>Not allowed</div>
-      )}
+        ))}
+      </div>
     </div>
   )
 }
 
-export const AdminManagePercent = () => {
+const AdminManagePercent = () => {
   const { me } = useContext(UserContext)
 
   const [users, setUsers] = useState([])
   const [manage, setManage] = useState(false)
   const [percent, setPercent] = useState(1.15)
+
   useEffect(() => {
-    axios
-      .get(`/api/admin/managepercent`, {
-        withCredentials: true,
-      })
+    myAxios
+      .get("/api/admin/managepercent")
+
       .then((res) => {
-        console.log(res.data)
+        // console.log(res.data)
         setUsers(res.data)
         setManage(false)
       })
@@ -117,18 +98,12 @@ export const AdminManagePercent = () => {
 
   const handleManage = async (user) => {
     setManage(true)
-    axios
+    myAxios
       .patch(
-        `/api/admin/managepercent`,
-        JSON.stringify({
-          id: user.id,
-          user_percent: Number(percent),
-        }),
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
+        "/api/admin/managepercent",
+        JSON.stringify({ id: user.id, user_percent: Number(percent) })
       )
+
       .catch((err) => {
         console.log(err)
       })
@@ -137,52 +112,41 @@ export const AdminManagePercent = () => {
     )
     setPercent(1.15)
   }
+  // console.log("USERS ", users)
+
+  if (users === null) return <div className="no_task">No users to manage</div>
 
   return (
-    <div className={styles.admin_approve_wrapper}>
-      {me.is_admin === 1 ? (
-        <div>
-          <span>ADMIN MANAGE PERCENT</span>
-          <div className={styles.users}>
-            {users ? (
-              users?.map((user) => (
-                <div key={user.id} className={styles.users__card}>
-                  <div>
-                    <label>{`${user.firstname} ${user.lastname}`}</label>
-                  </div>
-                  <div>
-                    <label>{user.email}</label>
-                  </div>
-                  {/* <div>
-                <label>ID: {user.id}</label>
-              </div> */}
-                  <div>
-                    <label>Percent: {user.user_percent}</label>
-                  </div>
-                  <div>
-                    <input
-                      required
-                      type="text"
-                      placeholder="set percent"
-                      onChange={(e) => setPercent(e.target.value)}
-                    />
-                  </div>
-                  <button
-                    className={styles.button}
-                    onClick={() => handleManage(user)}
-                  >
-                    manage
-                  </button>
-                </div>
-              ))
-            ) : (
-              <div>No users to approve</div>
-            )}
+    <div className={styles.manage_percent_wrapper}>
+      {/*   <div className={styles.user_search_bar}>
+        <input
+          type="text"
+          placeholder="Find user"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button onClick={() => handleSearch(search)}>search</button>
+      </div> */}
+      <div className={styles.percents_container}>
+        {users?.map((user) => (
+          <div className={styles.percent_card} key={user.id}>
+            <div className={styles.user_info}>
+              <ul>
+                <li>{`${user.firstname} ${user.lastname}`}</li>
+                <li>{user.email}</li>
+                <li>Percent: {user.user_percent}%</li>
+              </ul>
+            </div>
+            <div className={styles.confirm_manage}>
+              <input
+                type="number"
+                placeholder="set percent"
+                onChange={(e) => setPercent(e.target.value)}
+              />
+              <button onClick={() => handleManage(user)}>confirm</button>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div>Not allowed</div>
-      )}
+        ))}
+      </div>
     </div>
   )
 }
@@ -192,35 +156,33 @@ export const AdminManageOrders = () => {
   const [orders, setOrders] = useState([])
 
   useEffect(() => {
-    axios
-      .get(`/api/admin/orders`, { withCredentials: true })
+    myAxios
+      .get("/api/admin/orders")
+
       .then((res) => {
         /* console.log(res.data.orders) */
         setOrders(res.data.orders)
       })
   }, [])
+  if (orders === null) return <div className="no_task">No active orders</div>
 
   return (
     <div className="orders_wrapper">
-      {me.is_admin === 1 ? (
-        <div>
-          {orders ? (
-            <div className="orders_card">
-              <h2>Active orders</h2>
-              {orders?.map((order) => (
-                <div className="orders_list" key={order.order_id}>
-                  Order ID:{" "}
-                  <Link to={`${order.order_id}`}>{order.order_id}</Link>
-                </div>
-              ))}
+      <div className="orders_wrapper">
+        <div className="orders_card">
+          {orders?.map((order) => (
+            <div className="orders_list" key={order.order_id}>
+              <span className="orders_list__order_id">Order ID</span>:{" "}
+              <Link
+                className="orders_list__link"
+                to={`/admin/orders/${order.order_id}`}
+              >
+                {order.order_id}
+              </Link>
             </div>
-          ) : (
-            <div>You have no orders</div>
-          )}
+          ))}
         </div>
-      ) : (
-        <div className={styles.not_allowed}>Not allowed</div>
-      )}
+      </div>
     </div>
   )
 }
@@ -230,19 +192,88 @@ export const AdminSingleOrder = () => {
   const [order, setOrder] = useState({})
   const { me } = useContext(UserContext)
   useEffect(() => {
-    axios
-      .get(`/api/admin/orders/order?id=${id}`, {
-        withCredentials: true,
-      })
+    myAxios
+      .get(`/api/admin/orders/order?id=${id}`)
+
       .then((res) => {
-        console.log(res.data)
+        // console.log(res.data)
         setOrder(res.data)
       })
       .catch((err) => {
         console.log(err)
       })
   }, [id])
+
+  if (me.is_admin !== 1) return <div className="no_task">Not allowed</div>
+
   return (
+    <div className={styles2.cart_wrapper}>
+      <div className={styles2.cart_wrapper__total_cart_info}>
+        <div className={styles2.total_cart_info__info}>
+          <ul className={styles2.admin}>
+            <li>
+              Order ID: <span className="mark">{order.order_id}</span>
+            </li>
+            <li>Total items: {order.positions?.length}</li>
+            <li>
+              Total price:{" "}
+              <span className="mark">
+                {order.total_price?.toFixed(2)}&euro;
+              </span>
+            </li>
+            <li>
+              <span className="mark">{order.user?.email}</span>
+            </li>
+            <li>
+              <span className="mark">
+                {order.user?.firstname} {order.user?.lastname}
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className={styles2.cart_wrapper__cart_items}>
+        {order.positions?.map((product, index) => (
+          <div
+            className={styles2.cart_wrapper__cart_items__item_card}
+            key={index}
+          >
+            <ul>
+              <li>
+                Article: <span className="mark">{product.article}</span>
+              </li>
+              <li>Brand: {product.brand}</li>
+              <li>Currency: {product.currency}</li>
+              <li>Currency rate: {product.currency_rate}</li>
+              <li>Delivery: {product.delivery}</li>
+              <li>Position_id: {product.position_id}</li>
+              <li>
+                Price:{" "}
+                <span className="mark">{product.price?.toFixed(2)}&euro;</span>
+              </li>
+              <li>
+                Product quantity price:{" "}
+                <span className="mark">
+                  {product.product_quantity_price?.toFixed(2)}&euro;
+                </span>
+              </li>
+              <li>
+                Quantity: <span className="mark">{product.quantity}</span>
+              </li>
+              <li>
+                Supplier: <span className="mark">{product.supplier}</span>
+              </li>
+              {product.weight ? (
+                <li>Weight: {product.weight?.toFixed(2)}kg</li>
+              ) : null}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
+  /*   return (
     <div className="order_wrapper">
       {order && (
         <div className="order_card">
@@ -287,7 +318,7 @@ export const AdminSingleOrder = () => {
         </div>
       )}
     </div>
-  )
+  ) */
 }
 
 export default AdminPage

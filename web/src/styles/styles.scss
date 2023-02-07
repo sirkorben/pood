@@ -8,6 +8,7 @@
 body {
   font-family: $montserrat-font;
   color: $text;
+  background-color: $main-dark;
 }
 button {
   font-family: inherit;
@@ -19,4 +20,32 @@ button {
   font-size: inherit;
   text-align: inherit;
   padding: 0;
+}
+
+.main-container {
+  /* background-color: red; */
+  /*   display: flex;
+  justify-content: center; */
+  margin: 0 auto;
+  max-width: 1220px;
+  min-height: 1200px;
+  padding-top: 20px;
+}
+
+.mark {
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.no_task {
+  background-color: $main-light-grey;
+  height: 40px;
+  width: 250px;
+  color: $main-dark;
+  font-size: 20px;
+  font-weight: 500;
+  border-radius: 33px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

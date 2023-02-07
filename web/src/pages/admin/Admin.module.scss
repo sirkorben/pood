@@ -1,5 +1,192 @@
-.admin {
-  /*  height: 100vh; */
+@import "../../styles/variables.scss";
+
+.admin_wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 40px;
+  .title {
+    margin: 0 auto;
+    background-color: $main-light;
+    color: $main-dark;
+    width: 290px;
+    height: 45px;
+    font-size: 30px;
+    text-align: center;
+    font-weight: 500;
+    border-radius: 33px;
+    padding-top: 3px;
+    margin-bottom: 40px;
+  }
+  .section_title {
+    background-color: $main-light;
+    color: $main-dark;
+    width: 280px;
+    height: 40px;
+    font-size: 28px;
+    text-align: center;
+    font-weight: 500;
+    border-radius: 33px;
+    padding-top: 3px;
+    margin-bottom: 20px;
+  }
+}
+
+.approve_wrapper {
+  background-color: $main-light;
+  color: $main-dark;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  .users_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    .user_card {
+      margin: 0 auto;
+      min-width: 280px;
+      padding-top: 20px;
+      height: 150px;
+      font-size: 23px;
+      font-weight: 500;
+      background-color: $main-light-grey;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      border-radius: 20px;
+      ul {
+        list-style: none;
+        padding-left: 0px;
+      }
+      button {
+        background-color: $main-dark;
+        color: $main-light;
+        width: 140px;
+        height: 40px;
+        text-align: center;
+        &:hover {
+          background-color: $main-dark-grey;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+.manage_percent_wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: $main-light;
+  min-height: 330px;
+  padding-left: 20px;
+  padding-top: 20px;
+  margin-bottom: 30px;
+
+  .user_search_bar {
+    padding-left: 20px;
+    margin-bottom: 30px;
+    input {
+      border: none;
+      background-color: $main-light;
+      border-bottom: 1px solid $main-dark;
+      width: 270px;
+      height: 40px;
+      font-size: 24px;
+      margin-right: 20px;
+      outline: none;
+    }
+    button {
+      background-color: $main-dark;
+      width: 140px;
+      height: 35px;
+      text-align: center;
+      font-size: 23px;
+      &:hover {
+        background-color: $main-dark-grey;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .percents_container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    color: $main-dark;
+    gap: 20px;
+    padding-bottom: 30px;
+  }
+
+  .percent_card {
+    min-height: 220px;
+    min-width: 280px;
+    background-color: $main-light-grey;
+    border-radius: 33px;
+    font-weight: 500;
+    padding-top: 20px;
+    font-size: 23px;
+    /* padding-right: 10px; */
+    /* display: flex;
+    flex-direction: column; */
+    .user_info {
+      margin-bottom: 9px;
+
+      ul {
+        list-style: none;
+        li {
+          margin-bottom: 9px;
+          &:last-child {
+            margin-bottom: 0px;
+          }
+        }
+      }
+    }
+    .confirm_manage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      input {
+        width: 145px;
+        border: none;
+        border-bottom: 1px solid $main-dark;
+        background-color: $main-light-grey;
+        margin-bottom: 9px;
+        outline: none;
+        font-size: 20px;
+        text-align: center;
+        &:focus {
+          &::placeholder {
+            color: $main-light-grey;
+          }
+        }
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+        }
+      }
+
+      button {
+        background-color: $main-dark;
+        color: $main-light;
+        width: 140px;
+        height: 35px;
+        text-align: center;
+        &:hover {
+          background-color: $main-dark-grey;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+/* .admin {
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -11,16 +198,16 @@
   text-align: center;
   color: black;
 }
-
-.admin_approve_wrapper {
-  /* height: 100vh; */
+ */
+/* .admin_approve_wrapper {
+ 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: black;
   gap: 10px;
-  /* border: 1px solid black; */
+ 
 
   .users {
     display: flex;
@@ -50,3 +237,4 @@
     }
   }
 }
+ */

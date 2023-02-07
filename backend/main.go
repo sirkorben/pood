@@ -49,7 +49,7 @@ func routes() *http.ServeMux {
 	sm.HandleFunc("/api/cart", helpers.HandleCors(shoppingCart))                             // GET, POST
 	sm.HandleFunc("/api/cart/add", helpers.HandleCors(addItemToCart))                        // POST
 	sm.HandleFunc("/api/cart/confirm", helpers.HandleCors(confirmCart))                      // POST
-	sm.HandleFunc("/pi/cart/remove", helpers.HandleCors(removeCart))                         // DELETE
+	sm.HandleFunc("/api/cart/remove", helpers.HandleCors(removeCart))                         // DELETE
 	sm.HandleFunc("/api/cart/removeitem", helpers.HandleCors(removeItemFromCart))            // DELETE
 	return sm
 }

@@ -1,8 +1,48 @@
 @import "../../styles/variables.scss";
 
-.search_wrapper {
+.search_container {
+  display: flex;
+  flex-direction: column;
+
+  &__searchbar_wrapper {
+    /* max-width: 700px; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 60px;
+    padding-left: 100px;
+    input {
+      width: 420px;
+      height: 40px;
+      font-size: 18px;
+      padding-left: 10px;
+      background-color: $main-light;
+      border: none;
+      outline: none;
+      &::placeholder {
+        color: $main-dark;
+      }
+    }
+    button {
+      width: 143px;
+      height: 40px;
+      background-color: $main-light_grey;
+      text-align: center;
+      color: $main-dark;
+      font-size: 24px;
+      &:hover {
+        background-color: $main-dark_grey;
+        cursor: pointer;
+        color: $main-light;
+      }
+    }
+  }
+}
+
+/* .search_wrapper {
   text-align: center;
-  /* margin-bottom: 20px; */
+ 
 
   .search {
     input {
@@ -20,7 +60,7 @@
       font-size: 20px;
       width: 100px;
       height: 30px;
-      /* border: 1px solid black; */
+      
       &:hover {
         background-color: $primary;
         color: $text;
@@ -30,3 +70,4 @@
     }
   }
 }
+ */
